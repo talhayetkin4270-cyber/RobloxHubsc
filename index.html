@@ -50,21 +50,68 @@
       <span class="brand-sub" id="brand-sub">SCRIPT HUB</span>
     </div>
     <ul class="nav-links" id="nav-links">
-      <li><a href="#" class="nav-link active" data-page="home"    onclick="navigate('home',this);return false">🏠 Ana Sayfa</a></li>
-      <li><a href="#" class="nav-link"        data-page="scripts" onclick="navigate('scripts',this);return false">📜 Scripts</a></li>
-      <li><a href="#" class="nav-link"        data-page="popular" onclick="navigate('popular',this);return false">🔥 Popüler</a></li>
-      <li><a href="#" class="nav-link"        data-page="about"   onclick="navigate('about',this);return false">⚙️ Hakkında</a></li>
+      <li><a href="#" class="nav-link active" data-page="home"    onclick="navigate('home',this);return false"><span data-i18n="nav_home">🏠 Home</span></a></li>
+      <li><a href="#" class="nav-link"        data-page="scripts" onclick="navigate('scripts',this);return false"><span data-i18n="nav_scripts">📜 Scripts</span></a></li>
+      <li><a href="#" class="nav-link"        data-page="popular" onclick="navigate('popular',this);return false"><span data-i18n="nav_popular">🔥 Popular</span></a></li>
+      <li><a href="#" class="nav-link"        data-page="chat"    onclick="navigate('chat',this);return false"><span data-i18n="nav_chat">💬 Chat</span></a></li>
+      <li><a href="#" class="nav-link"        data-page="about"   onclick="navigate('about',this);return false"><span data-i18n="nav_about">⚙️ About</span></a></li>
       <li id="admin-nav-item" class="hidden"><a href="#" class="nav-link admin-link" data-page="admin" onclick="navigate('admin',this);return false">👑 Admin</a></li>
     </ul>
-    <div class="nav-auth" id="nav-auth">
-      <button class="btn btn-ghost" onclick="openModal('login-modal')">Giriş Yap</button>
-      <button class="btn btn-primary" onclick="openModal('register-modal')">Kayıt Ol</button>
+    <div class="nav-right">
+      <!-- Language Switcher -->
+      <div class="lang-switcher">
+        <button id="lang-en" class="lang-btn active" onclick="setLang('en')">EN</button>
+        <span class="lang-divider">|</span>
+        <button id="lang-tr" class="lang-btn" onclick="setLang('tr')">TR</button>
+      </div>
+      <!-- Auth buttons -->
+      <div class="nav-auth" id="nav-auth">
+        <button class="btn btn-ghost" id="btn-login" onclick="openModal('login-modal')">Login</button>
+        <button class="btn btn-primary" id="btn-register" onclick="openModal('register-modal')">Register</button>
+      </div>
+      <!-- User area -->
+      <div class="nav-user hidden" id="nav-user">
+        <div class="profile-trigger" onclick="toggleProfilePanel()">
+          <div class="profile-avatar" id="nav-avatar">👤</div>
+          <span id="nav-username"></span>
+          <span class="profile-caret">▾</span>
+        </div>
+        <!-- Profile Dropdown -->
+        <div class="profile-panel" id="profile-panel">
+          <div class="pp-header">
+            <div class="pp-avatar-wrap">
+              <div class="pp-avatar" id="pp-avatar-display">👤</div>
+              <button class="pp-avatar-edit" onclick="document.getElementById('pp-avatar-input').click()">✏️</button>
+              <input type="file" id="pp-avatar-input" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+            </div>
+            <div class="pp-info">
+              <div class="pp-name" id="pp-display-name"></div>
+              <div class="pp-email" id="pp-email"></div>
+            </div>
+          </div>
+          <div class="pp-body">
+            <div class="pp-section-title" data-i18n="pp_customize">Profile Color</div>
+            <div class="pp-colors">
+              <button class="pp-color" style="background:#7c3aed" onclick="setProfileColor('#7c3aed')"></button>
+              <button class="pp-color" style="background:#ef4444" onclick="setProfileColor('#ef4444')"></button>
+              <button class="pp-color" style="background:#06b6d4" onclick="setProfileColor('#06b6d4')"></button>
+              <button class="pp-color" style="background:#22c55e" onclick="setProfileColor('#22c55e')"></button>
+              <button class="pp-color" style="background:#f59e0b" onclick="setProfileColor('#f59e0b')"></button>
+              <button class="pp-color" style="background:#ec4899" onclick="setProfileColor('#ec4899')"></button>
+            </div>
+            <div class="pp-section-title" style="margin-top:.75rem" data-i18n="pp_avatar_url">Avatar URL</div>
+            <div style="display:flex;gap:.5rem;margin-top:.35rem">
+              <input type="text" id="pp-avatar-url" class="form-input" style="font-size:.78rem;padding:.4rem .7rem" placeholder="https://...">
+              <button class="btn btn-ghost btn-sm" onclick="applyAvatarUrl()">✓</button>
+            </div>
+          </div>
+          <div class="pp-footer">
+            <button class="btn btn-danger btn-sm btn-full" onclick="logout()" data-i18n="logout">Logout</button>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" onclick="toggleMobileMenu()">☰</button>
     </div>
-    <div class="nav-user hidden" id="nav-user">
-      <span class="user-badge">👤 <span id="nav-username"></span></span>
-      <button class="btn btn-ghost" onclick="logout()">Çıkış</button>
-    </div>
-    <button class="hamburger" onclick="toggleMobileMenu()">☰</button>
   </nav>
 
   <!-- ============================== PAGES ============================== -->
@@ -137,16 +184,7 @@
       <div class="scripts-toolbar">
         <div class="search-wrap">
           <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" class="search-input" placeholder="Script veya oyun ara..." oninput="filterScripts()"/>
-        </div>
-        <div class="filter-tags">
-          <button class="filter-tag active" onclick="setTag('all',this)">Tümü</button>
-          <button class="filter-tag" onclick="setTag('aimbot',this)">Aimbot</button>
-          <button class="filter-tag" onclick="setTag('esp',this)">ESP</button>
-          <button class="filter-tag" onclick="setTag('speed',this)">Speed</button>
-          <button class="filter-tag" onclick="setTag('farm',this)">Farm</button>
-          <button class="filter-tag" onclick="setTag('gui',this)">GUI Hub</button>
-          <button class="filter-tag" onclick="setTag('utility',this)">Utility</button>
+          <input type="text" id="search-input" class="search-input" data-i18n-placeholder="search_placeholder" placeholder="Search scripts or games..." oninput="filterScripts()"/>
         </div>
       </div>
       <div class="scripts-grid" id="scripts-grid"></div>
@@ -161,6 +199,28 @@
       </div>
       <div class="scripts-grid" id="popular-grid"></div>
       <div class="empty-state hidden" id="popular-empty"><div class="empty-icon">🔥</div><p>Henüz yeterli veri yok.</p></div>
+    </section>
+
+    <!-- CHAT PAGE -->
+    <section id="page-chat" class="page">
+      <div class="page-header">
+        <h1 class="page-title glitch" data-text="CHAT">CHAT</h1>
+        <p class="page-desc" data-i18n="chat_desc">Ask questions, share ideas with the community.</p>
+      </div>
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty" id="chat-empty" data-i18n="chat_empty">No messages yet. Be the first!</div>
+        </div>
+        <div class="chat-input-area" id="chat-input-area">
+          <div class="chat-input-wrap" id="chat-logged-in">
+            <input type="text" id="chat-input" class="chat-input" data-i18n-placeholder="chat_placeholder" placeholder="Write a message..." maxlength="500" onkeydown="if(event.key==='Enter')sendMessage()">
+            <button class="btn btn-primary btn-sm" onclick="sendMessage()" data-i18n="chat_send">Send</button>
+          </div>
+          <div class="chat-login-prompt hidden" id="chat-logged-out">
+            <span data-i18n="chat_login_prompt">Please <a href="#" onclick="openModal('login-modal')">log in</a> to send messages.</span>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- DETAIL PAGE (full page, not modal) -->
@@ -191,8 +251,8 @@
         </div>
         <div class="about-card glass-card">
           <div class="about-icon">🌐</div>
-          <h3>İletişim</h3>
-          <p id="about-text-4">Discord veya sosyal medyadan ulaşabilirsiniz.<br/><strong id="about-discord">@erenzxo</strong></p>
+          <h3 data-i18n="about_contact">Contact</h3>
+          <p id="about-text-4" data-i18n="about_contact_desc">Reach us via Discord or social media.<br/><a id="about-discord" href="#" target="_blank" class="discord-link">@erenzxo</a></p>
         </div>
       </div>
     </section>
@@ -426,6 +486,10 @@
         <div class="form-group">
           <label>Oyun / Game</label>
           <input type="text" id="sm-game" class="form-input" placeholder="Örn: Blox Fruits"/>
+        </div>
+        <div class="form-group">
+          <label>Roblox Game ID <span class="opt-label">(Oyun sayfası ID'si)</span></label>
+          <input type="text" id="sm-gameid" class="form-input" placeholder="Örn: 2753915549"/>
         </div>
         <div class="form-group">
           <label>Kategori</label>

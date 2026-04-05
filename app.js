@@ -1,8 +1,69 @@
 // ============================================================
 //  Humanoid Script Hub — app.js
-//  v1 style + v2 features: full detail pages, admin-only upload
-//  Admin: erenzxo / Nere1234
+//  v3: i18n + Profile Panel + Chat + Game Links
 // ============================================================
+
+// ============================================================
+//  i18n TRANSLATIONS
+// ============================================================
+const TRANSLATIONS = {
+  en: {
+    nav_home: '🏠 Home', nav_scripts: '📜 Scripts',
+    nav_popular: '🔥 Popular', nav_chat: '💬 Chat', nav_about: '⚙️ About',
+    btn_login: 'Login', btn_register: 'Register', logout: 'Logout',
+    search_placeholder: 'Search scripts or games...',
+    chat_desc: 'Ask questions, share ideas with the community.',
+    chat_empty: 'No messages yet. Be the first!',
+    chat_placeholder: 'Write a message...', chat_send: 'Send',
+    chat_login_prompt: 'Please log in to send messages.',
+    pp_customize: 'Profile Color', pp_avatar_url: 'Avatar URL',
+    about_contact: 'Contact', about_contact_desc: 'Reach us on Discord or social media.',
+    view_btn: 'View →', copy_btn: '📋 Copy', copied_btn: '✅ Copied!',
+    all_filter: 'All',
+  },
+  tr: {
+    nav_home: '🏠 Ana Sayfa', nav_scripts: '📜 Scriptler',
+    nav_popular: '🔥 Popüler', nav_chat: '💬 Sohbet', nav_about: '⚙️ Hakkında',
+    btn_login: 'Giriş Yap', btn_register: 'Kayıt Ol', logout: 'Çıkış Yap',
+    search_placeholder: 'Script veya oyun ara...',
+    chat_desc: 'Toplulukla soru sor, fikir paylaş.',
+    chat_empty: 'Henüz mesaj yok. İlk yazan sen ol!',
+    chat_placeholder: 'Mesaj yaz...', chat_send: 'Gönder',
+    chat_login_prompt: 'Mesaj göndermek için giriş yap.',
+    pp_customize: 'Profil Rengi', pp_avatar_url: 'Avatar URL',
+    about_contact: 'İletişim', about_contact_desc: 'Discord’dan bize ulaşabörsiniz.',
+    view_btn: 'Görüntüle →', copy_btn: '📋 Kopyala', copied_btn: '✅ Kopyalandı!',
+    all_filter: 'Tümü',
+  }
+};
+let currentLang = localStorage.getItem('hmd_lang') || 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('hmd_lang', lang);
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  document.getElementById('lang-tr').classList.toggle('active', lang === 'tr');
+  applyTranslations();
+}
+
+function applyTranslations() {
+  const T = TRANSLATIONS[currentLang];
+  // data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (T[key]) el.textContent = T[key];
+  });
+  // data-i18n-placeholder
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (T[key]) el.placeholder = T[key];
+  });
+  // Auth buttons
+  const bl = document.getElementById('btn-login');
+  const br = document.getElementById('btn-register');
+  if (bl) bl.textContent = T.btn_login;
+  if (br) br.textContent = T.btn_register;
+}
 
 const ADMIN_USER = 'erenzxo';
 const ADMIN_PASS = 'Nere1234';
@@ -50,11 +111,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   initParticles();
   initScrollEffect();
   restoreSession();
+  setLang(currentLang);
+  updateDiscordLink();
+
+  // Chat auth state
+  const loggedIn = !!currentUser;
+  const ciEl = document.getElementById('chat-logged-in');
+  const coEl = document.getElementById('chat-logged-out');
+  if (ciEl) ciEl.classList.toggle('hidden', !loggedIn);
+  if (coEl) coEl.classList.toggle('hidden', loggedIn);
 
   setTimeout(() => document.getElementById('loading-screen').classList.add('hidden'), 1900);
 
   renderAll();
   applyAnnouncement();
+  loadChatMessages();
+
+  // Close profile panel on outside click
+  document.addEventListener('click', e => {
+    const panel = document.getElementById('profile-panel');
+    const trigger = document.querySelector('.profile-trigger');
+    if (panel && !panel.contains(e.target) && trigger && !trigger.contains(e.target)) {
+      panel.classList.remove('open');
+    }
+  });
 });
 
 
@@ -225,9 +305,75 @@ function applyUserUI() {
   document.getElementById('nav-user').classList.toggle('hidden', !loggedIn);
   document.getElementById('admin-nav-item').classList.toggle('hidden', !isAdmin);
 
+  // Chat input state
+  const ciEl = document.getElementById('chat-logged-in');
+  const coEl = document.getElementById('chat-logged-out');
+  if (ciEl) ciEl.classList.toggle('hidden', !loggedIn);
+  if (coEl) coEl.classList.toggle('hidden', loggedIn);
+
   if (loggedIn) {
     document.getElementById('nav-username').textContent = currentUser.username;
+    // Profile panel
+    const color = currentUser.profileColor || 'var(--accent-purple)';
+    const avatarSrc = currentUser.avatarUrl || '';
+    const initials = currentUser.username[0].toUpperCase();
+    const navAv = document.getElementById('nav-avatar');
+    const ppAv  = document.getElementById('pp-avatar-display');
+    const ppName = document.getElementById('pp-display-name');
+    const ppEmail = document.getElementById('pp-email');
+    if (navAv) {
+      if (avatarSrc) navAv.innerHTML = `<img src="${esc(avatarSrc)}" onerror="this.outerHTML='${initials}'">`;
+      else { navAv.textContent = initials; navAv.style.background = color; }
+    }
+    if (ppAv) {
+      if (avatarSrc) ppAv.innerHTML = `<img src="${esc(avatarSrc)}" onerror="this.outerHTML='${initials}'">`;
+      else { ppAv.textContent = initials; ppAv.style.background = color; }
+    }
+    if (ppName)  ppName.textContent  = currentUser.username;
+    if (ppEmail) ppEmail.textContent = currentUser.email || '';
+    if (document.getElementById('pp-avatar-url')) {
+      document.getElementById('pp-avatar-url').value = avatarSrc;
+    }
   }
+}
+
+// ============================================================
+//  PROFILE PANEL
+// ============================================================
+function toggleProfilePanel() {
+  document.getElementById('profile-panel').classList.toggle('open');
+}
+
+function setProfileColor(color) {
+  if (!currentUser) return;
+  currentUser.profileColor = color;
+  localStorage.setItem('hmd_session', JSON.stringify(currentUser));
+  applyUserUI();
+  showToast('🎨 Profil rengi güncellendi!');
+}
+
+async function handleAvatarUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast('⚠️ Sadece görsel dosyaları desteklenir!'); return; }
+  if (file.size > 2 * 1024 * 1024) { showToast('⚠️ Dosya 2MB\'dan küçük olmalı!'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentUser.avatarUrl = e.target.result;
+    localStorage.setItem('hmd_session', JSON.stringify(currentUser));
+    applyUserUI();
+    showToast('✅ Avatar güncellendi!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyAvatarUrl() {
+  const url = document.getElementById('pp-avatar-url')?.value.trim();
+  if (!url || !currentUser) return;
+  currentUser.avatarUrl = url;
+  localStorage.setItem('hmd_session', JSON.stringify(currentUser));
+  applyUserUI();
+  showToast('✅ Avatar URL uygulandı!');
 }
 
 // ============================================================
@@ -311,6 +457,8 @@ function buildCard(script) {
     ? `<img class="sc-img" src="${esc(script.image)}" alt="" onerror="this.outerHTML=\`<div class='sc-img-ph'><div class='sc-img-ph-code'>${esc(codePreview)}</div></div>\`">`
     : `<div class="sc-img-ph"><div class="sc-img-ph-code">${esc(codePreview)}</div></div>`;
 
+  const T = TRANSLATIONS[currentLang];
+
   card.innerHTML = `
     ${script.featured ? '<div class="sc-featured-pin">⭐ Featured</div>' : ''}
     ${imgHtml}
@@ -322,10 +470,10 @@ function buildCard(script) {
       </div>
       <div class="sc-name">${esc(script.name)}</div>
       ${script.game ? `<div class="sc-game">🎮 ${esc(script.game)}</div>` : ''}
-      <div class="sc-desc">${esc(script.desc)}</div>
+      <div class="sc-desc">${esc(script.desc || script.description || '')}</div>
       <div class="sc-footer">
         <span class="sc-views">👁 <span>${script.views || 0}</span></span>
-        <span class="sc-arrow">Görüntüle →</span>
+        <span class="sc-arrow">${T.view_btn || 'View →'}</span>
       </div>
     </div>
   `;
@@ -366,8 +514,15 @@ async function openDetailPage(id) {
     ? "document.querySelector('[data-page=popular]')"
     : "document.querySelector('[data-page=scripts]')";
 
+  const gameBtns = (s.game_id)
+    ? `<div class="game-btn-row">
+        <a class="btn-game-link" href="https://www.roblox.com/games/${esc(s.game_id)}" target="_blank" rel="noopener">🌐 Game Page</a>
+        <a class="btn-play-game" href="roblox://placeId=${esc(s.game_id)}">▶️ Play Game</a>
+       </div>`
+    : '';
+
   container.innerHTML = `
-    <button class="back-btn" onclick="navigate('${backPage}', ${backEl})">← Geri Dön</button>
+    <button class="back-btn" onclick="navigate('${backPage}', ${backEl})">← Back</button>
 
     <div class="detail-hero">
       ${bannerHtml}
@@ -380,6 +535,7 @@ async function openDetailPage(id) {
           ${s.verified ? '<span class="sc-badge-verified">✅ Verified</span>' : ''}
           ${s.featured ? '<span class="sc-featured-pin" style="position:static">⭐ Featured</span>' : ''}
         </div>
+        ${gameBtns}
       </div>
     </div>
 
@@ -474,7 +630,7 @@ function openAddScript() {
   openModal('script-modal');
 }
 
-function editScript(id) {
+async function editScript(id) {
   const s = scripts.find(x => x.id === id);
   if (!s) return;
   if (currentPage === 'detail') navigate('admin', document.querySelector('[data-page=admin]'));
@@ -483,13 +639,14 @@ function editScript(id) {
   document.getElementById('sm-name').value      = s.name     || '';
   document.getElementById('sm-game').value      = s.game     || '';
   document.getElementById('sm-cat').value       = s.category || 'utility';
-  document.getElementById('sm-desc').value      = s.desc     || '';
-  document.getElementById('sm-longdesc').value  = s.longdesc || '';
+  document.getElementById('sm-desc').value      = s.description || s.desc || '';
+  document.getElementById('sm-longdesc').value  = s.long_description || s.longdesc || '';
   document.getElementById('sm-features').value  = s.features || '';
   document.getElementById('sm-code').value      = s.code     || '';
   document.getElementById('sm-featured').checked = !!s.featured;
   document.getElementById('sm-keyless').checked  = !!s.keyless;
   document.getElementById('sm-verified').checked = !!s.verified;
+  if (document.getElementById('sm-gameid')) document.getElementById('sm-gameid').value = s.game_id || '';
   // Restore image
   _pendingImage = s.image || '';
   if (_pendingImage) {
@@ -519,8 +676,10 @@ async function saveScript() {
 
   if (!name || !desc || !code) { showToast('⚠️ Ad, açıklama ve kod zorunludur!'); return; }
 
+  const gameIdVal = document.getElementById('sm-gameid')?.value.trim() || '';
+
   const scriptObj = { 
-    name, game, category, image, 
+    name, game, category, image, game_id: gameIdVal,
     description: desc, long_description: longdesc, features, code, 
     featured, keyless, verified 
   };
@@ -1010,3 +1169,91 @@ function adjustBrightness(hex, amount) {
   } catch { return hex; }
 }
 
+// ============================================================
+//  CHAT
+// ============================================================
+let chatSubscription = null;
+
+async function loadChatMessages() {
+  const container = document.getElementById('chat-messages');
+  const empty = document.getElementById('chat-empty');
+  if (!container) return;
+
+  const { data, error } = await _supabase
+    .from('messages')
+    .select('*')
+    .order('created_at', { ascending: true })
+    .limit(100);
+
+  if (error || !data || data.length === 0) return;
+  if (empty) empty.remove();
+  container.innerHTML = '';
+  data.forEach(m => container.appendChild(buildChatMsg(m)));
+  container.scrollTop = container.scrollHeight;
+
+  if (chatSubscription) chatSubscription.unsubscribe();
+  chatSubscription = _supabase
+    .channel('messages-realtime')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+      const empty2 = document.getElementById('chat-empty');
+      if (empty2) empty2.remove();
+      container.appendChild(buildChatMsg(payload.new));
+      container.scrollTop = container.scrollHeight;
+    })
+    .subscribe();
+}
+
+function buildChatMsg(m) {
+  const div = document.createElement('div');
+  const isOwn = currentUser && m.username === currentUser.username;
+  div.className = 'chat-msg' + (isOwn ? ' own' : '');
+  const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  div.innerHTML = `
+    <div class="chat-msg-header">
+      <span class="chat-msg-user${m.is_admin ? ' is-admin' : ''}">${esc(m.username)}</span>
+      ${m.is_admin ? '<span class="chat-msg-admin-badge">\ud83d\udc51 Admin</span>' : ''}
+      <span>${time}</span>
+    </div>
+    <div class="chat-msg-text">${esc(m.content)}</div>
+  `;
+  return div;
+}
+
+async function sendMessage() {
+  if (!currentUser) { showToast('\u26a0\ufe0f Mesaj göndermek için giriş yap!'); return; }
+  const input = document.getElementById('chat-input');
+  const content = input.value.trim();
+  if (!content) return;
+  if (content.length > 500) { showToast('\u26a0\ufe0f Mesaj 500 karakterden uzun olamaz!'); return; }
+
+  const { error } = await _supabase.from('messages').insert([{
+    username: currentUser.username,
+    content,
+    is_admin: !!currentUser.isAdmin
+  }]);
+
+  if (!error) {
+    input.value = '';
+  } else {
+    showToast("⚠️ Mesaj gönderilemedi. Supabase'de messages tablosunu oluşturmanız gerekiyor!");
+  }
+}
+
+// ============================================================
+//  DISCORD LINK UPDATER
+// ============================================================
+function updateDiscordLink() {
+  const el = document.getElementById('about-discord');
+  if (!el) return;
+  const raw = siteConfig.discord || '@erenzxo';
+  let href = '#';
+  if (raw.startsWith('http')) {
+    href = raw;
+  } else if (raw.startsWith('discord.gg/')) {
+    href = 'https://' + raw;
+  } else {
+    href = 'https://discord.gg/' + raw.replace('@', '');
+  }
+  el.href = href;
+  el.textContent = raw;
+}
