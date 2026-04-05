@@ -1363,17 +1363,16 @@ function buildChatMsg(m) {
   const adminDropdown = (currentUser && currentUser.isAdmin && !isOwn) ? 
      `<button style="background:none; border:none; cursor:pointer; color:var(--text-muted); font-size:1rem; margin-left:auto;" onclick="deleteIndividualMessage('${m.id}')" title="Bu mesajı sil">🗑️</button>` : '';
 
-  // Direct flex positioning to guarantee names are rigidly ABOVE messages securely globally
   div.innerHTML = `
     <div class="chat-msg-avatar" style="cursor:pointer;" onclick="openProfileViewer('${esc(m.username)}')">${avatarHtml}</div>
-    <div class="chat-msg-content" style="display:flex; flex-direction:column; gap:0.2rem; width:100%; max-width:85%;">
-      <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.75rem; color:var(--text-muted); ${isOwn ? 'align-self:flex-end; flex-direction:row-reverse;' : 'align-self:flex-start;'}">
+    <div style="display:flex; flex-direction:column; gap:0.2rem; align-items:${isOwn ? 'flex-end' : 'flex-start'}; max-width:85%;">
+      <div style="display:flex; flex-direction:${isOwn ? 'row-reverse' : 'row'}; align-items:center; gap:0.4rem; font-size:0.75rem; color:var(--text-muted);">
         <span style="cursor:pointer; font-weight:bold; font-family:'Orbitron', sans-serif; color:${m.is_admin ? 'var(--accent-gold)' : 'var(--accent-purple-b)'};" onclick="openProfileViewer('${esc(m.username)}')">${esc(m.username)}</span>
         ${m.is_admin ? '<span class="chat-msg-admin-badge">\ud83d\udc51 Admin</span>' : ''}
         <span style="opacity:0.5; font-size:0.65rem;">${time}</span>
         ${adminDropdown}
       </div>
-      <div class="chat-msg-text" style="${isOwn ? 'background:linear-gradient(135deg, rgba(124,58,237,.25), rgba(99,102,241,.18)); border-radius:12px 12px 0 12px;' : 'background:rgba(124,58,237,.08); border-radius:0 12px 12px 12px;'} padding:0.65rem 0.95rem; border:1px solid var(--border); box-shadow:0 3px 10px rgba(0,0,0,0.15); font-size:0.9rem; word-break:break-word; width:fit-content; ${isOwn ? 'align-self:flex-end;' : ''}">${esc(m.content)}</div>
+      <div class="chat-msg-text" style="${isOwn ? 'background:linear-gradient(135deg, rgba(124,58,237,.25), rgba(99,102,241,.18)); border-radius:12px 12px 0 12px;' : 'background:rgba(124,58,237,.08); border-radius:0 12px 12px 12px;'} padding:0.65rem 0.95rem; border:1px solid var(--border); box-shadow:0 3px 10px rgba(0,0,0,0.15); font-size:0.9rem; word-break:break-word; text-align:left;">${esc(m.content)}</div>
     </div>
   `;
   return div;
