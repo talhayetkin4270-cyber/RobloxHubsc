@@ -1255,10 +1255,11 @@ async function loadChatMessages() {
   const { data, error } = await _supabase
     .from('messages')
     .select('*')
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
     .limit(100);
 
   if (error) return;
+  if (data) data.reverse();
   
   if (!data || data.length === 0) {
       if (empty) {
@@ -1294,9 +1295,10 @@ async function loadChatMessages() {
 
 async function fetchNewMessages() {
   if (!document.getElementById('page-chat').classList.contains('active')) return; 
-  let query = _supabase.from('messages').select('*').order('created_at', { ascending: true }).limit(100);
+  let query = _supabase.from('messages').select('*').order('created_at', { ascending: false }).limit(100);
   const { data, error } = await query;
   if (error) return;
+  if (data) data.reverse();
 
   const container = document.getElementById('chat-messages');
   const empty = document.getElementById('chat-empty');
