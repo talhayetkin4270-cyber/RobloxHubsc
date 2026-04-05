@@ -462,7 +462,7 @@ function renderRecent() {
   const grid  = document.getElementById('recent-grid');
   const empty = document.getElementById('recent-empty');
   grid.innerHTML = '';
-  const recent = [...scripts].reverse().slice(0, 8);
+  const recent = scripts.slice(0, 8);
   if (recent.length === 0) { empty.classList.remove('hidden'); return; }
   empty.classList.add('hidden');
   recent.forEach(s => grid.appendChild(buildCard(s)));
