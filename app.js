@@ -1338,17 +1338,21 @@ function buildChatMsg(m) {
   div.className = 'chat-msg' + (isOwn ? ' own' : '');
   const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  const adminClick = (currentUser && currentUser.isAdmin && m.username !== currentUser.username) ? `onclick="adminActionOnUser('${esc(m.username)}')" style="cursor:pointer; text-decoration:underline dashed;" title="Sustur / Mute Kaldır"` : '';
-  const delBtn = (currentUser && currentUser.isAdmin) ? `<button class="btn btn-ghost" style="font-size:0.7rem; padding:0.1rem 0.3rem; margin-left:auto; color:var(--accent-red); margin-top:-0.2rem;" onclick="deleteIndividualMessage('${m.id}')">🗑️ Sil</button>` : '';
+  // Get Avatar from cached users array
+  const uObj = users.find(u => u.username === m.username);
+  const avatarSrc = (uObj && uObj.avatar_url) ? uObj.avatar_url : '';
+  const avatarHtml = avatarSrc ? `<img src="${esc(avatarSrc)}"/>` : `👤`;
 
   div.innerHTML = `
-    <div class="chat-msg-header" style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-      <span class="chat-msg-user${m.is_admin ? ' is-admin' : ''}" ${adminClick}>${esc(m.username)}</span>
-      ${m.is_admin ? '<span class="chat-msg-admin-badge">\ud83d\udc51 Admin</span>' : ''}
-      <span style="opacity:0.6; font-size:0.75rem;">${time}</span>
-      ${delBtn}
+    <div class="chat-msg-avatar" style="cursor:pointer;" onclick="openProfileViewer('${esc(m.username)}')">${avatarHtml}</div>
+    <div class="chat-msg-content">
+      <div class="chat-msg-header">
+        <span class="chat-msg-user${m.is_admin ? ' is-admin' : ''}" style="cursor:pointer;" onclick="openProfileViewer('${esc(m.username)}')">${esc(m.username)}</span>
+        ${m.is_admin ? '<span class="chat-msg-admin-badge">\ud83d\udc51 Admin</span>' : ''}
+        <span style="opacity:0.6; font-size:0.75rem;">${time}</span>
+      </div>
+      <div class="chat-msg-text">${esc(m.content)}</div>
     </div>
-    <div class="chat-msg-text">${esc(m.content)}</div>
   `;
   return div;
 }
@@ -1365,37 +1369,117 @@ async function clearChat() {
   }
 }
 
-async function deleteIndividualMessage(msgId) {
-  if (!currentUser || !currentUser.isAdmin) return;
-  if (!confirm('Bu mesajı silmek istediğinize emin misiniz?')) return;
-  const { error } = await _supabase.from('messages').delete().eq('id', msgId);
-  if (!error) {
-     const el = document.getElementById('msg-' + msgId);
-     if (el) el.remove();
-     showToast('✅ Mesaj silindi!');
-  } else {
-     showToast('Hata: ' + error.message);
+// ============== PROFILE VIEW & SETTINGS ==============
+
+function openProfileSettings() {
+  if (!currentUser) return;
+  closeModal('profile-panel');
+  document.getElementById('profile-panel').classList.remove('open');
+  
+  document.getElementById('ps-username').value = currentUser.username || '';
+  document.getElementById('ps-email').value = currentUser.email || '';
+  document.getElementById('ps-bio').value = currentUser.bio || '';
+  document.getElementById('ps-avatar-url').value = currentUser.avatarUrl || '';
+  document.getElementById('ps-password').value = '';
+  openModal('profile-settings-modal');
+}
+
+function applyAvatarUrlFromModal() {
+  let url = document.getElementById('ps-avatar-url').value.trim();
+  if (url) {
+    showToast('Görsel alındı. Değişiklikleri Kaydet butonuna basarak işlemi tamamlayın.');
   }
 }
 
-async function adminActionOnUser(username) {
+async function updateSelfProfile() {
+  if (!currentUser) return;
+  const newU = document.getElementById('ps-username').value.trim();
+  const newE = document.getElementById('ps-email').value.trim();
+  const newB = document.getElementById('ps-bio').value.trim();
+  const newA = document.getElementById('ps-avatar-url').value.trim();
+  const newP = document.getElementById('ps-password').value.trim();
+  
+  if (!newU) return showToast('⚠️ Kullanıcı adı boş olamaz!');
+  
+  const updates = { username: newU, email: newE, bio: newB, avatar_url: newA };
+  if (newP) updates.password = newP;
+  
+  const { error } = await _supabase.from('users').update(updates).eq('id', currentUser.id);
+  if (error) {
+    showToast('⚠️ Hata: ' + error.message);
+  } else {
+    showToast('✅ Profil başarıyla güncellendi!');
+    // Update local currentUser
+    currentUser.username = newU;
+    currentUser.email = newE;
+    currentUser.bio = newB;
+    currentUser.avatarUrl = newA;
+    if (newP) currentUser.password = newP;
+    localStorage.setItem('humanoid_user', JSON.stringify(currentUser));
+    updateNavUser();
+    closeModal('profile-settings-modal');
+    loadData(); // reload users array globally
+  }
+}
+
+let activeViewerUsername = null;
+function openProfileViewer(username) {
+  const u = users.find(x => x.username === username);
+  if (!u) return;
+  activeViewerUsername = u.username;
+  document.getElementById('uv-username').innerText = u.username;
+  const d = new Date(u.created_at);
+  document.getElementById('uv-date').innerText = 'Katılım: ' + d.toLocaleDateString();
+  document.getElementById('uv-bio').innerText = u.bio ? u.bio : 'Bu kullanıcı henüz bir bio girmemiş.';
+  document.getElementById('uv-avatar').innerHTML = u.avatar_url ? `<img src="${esc(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;"/>` : '👤';
+  
+  const adminActions = document.getElementById('uv-admin-actions');
+  if (currentUser && currentUser.isAdmin && u.username !== currentUser.username) {
+      adminActions.classList.remove('hidden');
+      const isMuted = siteConfig.muted_users && siteConfig.muted_users.includes(u.username);
+      const btnMute = document.getElementById('uv-btn-mute');
+      if (isMuted) {
+          btnMute.innerText = 'Susturmayı Kaldır (Unmute)';
+          btnMute.onclick = () => uvActionMute(u.username, false);
+      } else {
+          btnMute.innerText = 'Sustur / Mute';
+          btnMute.onclick = () => uvActionMute(u.username, true);
+      }
+      document.getElementById('uv-btn-deleteAll').onclick = () => uvActionDeleteAll(u.username);
+  } else {
+      adminActions.classList.add('hidden');
+  }
+  openModal('user-viewer-modal');
+}
+
+async function uvActionMute(username, doMute) {
   if (!currentUser || !currentUser.isAdmin) return;
   const mUsers = siteConfig.muted_users || [];
-  const isMuted = mUsers.includes(username);
-  const action = isMuted ? "Susturulmasını KALDIR" : "Sohbetten SUSTUR";
-  if (confirm(username + " adlı kullanıcı için işlem: " + action + " ? Senkronize olması birkaç saniye sürebilir.")) {
-      if (isMuted) {
-          siteConfig.muted_users = mUsers.filter(u => u !== username);
-      } else {
-          siteConfig.muted_users = [...mUsers, username];
-      }
-      showToast('🔄 İşleniyor...');
-      const { error } = await _supabase.from('site_config').upsert({ id: 1, config: siteConfig, announcement: siteConfig.announcement || '' });
-      if (!error) {
-          showToast('✅ İşlem başarılı!');
-      } else {
-          showToast('⚠️ Hata oluştu: ' + error.message);
-      }
+  if (doMute) {
+      siteConfig.muted_users = [...mUsers, username];
+  } else {
+      siteConfig.muted_users = mUsers.filter(x => x !== username);
+  }
+  showToast('🔄 Bekleyin...');
+  const { error } = await _supabase.from('site_config').upsert({ id: 1, config: siteConfig, announcement: siteConfig.announcement || '' });
+  if (!error) {
+      showToast('✅ İşlem başarılı!');
+      openProfileViewer(username); // refresh modal state
+  } else {
+      showToast('⚠️ Hata: ' + error.message);
+  }
+}
+
+async function uvActionDeleteAll(username) {
+  if (!currentUser || !currentUser.isAdmin) return;
+  if (!confirm(username + ' kullanıcısının tümmm mesajları silinecek! Devam mı?')) return;
+  const { error } = await _supabase.from('messages').delete().eq('username', username);
+  if (!error) {
+      showToast('✅ Tamamlandı!');
+      fetchNewMessages();
+      closeModal('user-viewer-modal');
+  } else {
+      showToast('Hata: ' + error.message);
   }
 }
 
