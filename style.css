@@ -148,9 +148,9 @@ a { text-decoration: none; color: inherit; }
    ANNOUNCEMENT BAR
    ============================================================ */
 .ann-bar {
+  display: none !important;
   position: fixed; top: 0; left: 0; right: 0; z-index: 1100;
   background: linear-gradient(135deg,rgba(124,58,237,.9),rgba(239,68,68,.8));
-  display: flex; align-items: center; gap: .75rem;
   padding: .55rem 2rem;
   font-size: .85rem; font-weight: 600;
   backdrop-filter: blur(8px);
