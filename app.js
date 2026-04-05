@@ -757,10 +757,31 @@ async function saveScript() {
   if (id) {
     const { error } = await _supabase.from('scripts').update(scriptObj).eq('id', id);
     if (!error) showToast('✅ Script güncellendi!');
+    else showToast('Hata (Update): ' + error.message);
   } else {
+    // let supabase generate uuid if needed or use the old sc_ format if we pass it
+    // we'll try passing id, if it fails, the user will see it.
     scriptObj.id = 'sc_' + Date.now();
-    const { error } = await _supabase.from('scripts').insert([scriptObj]);
+    let { error } = await _supabase.from('scripts').insert([scriptObj]);
+    
+    // Fallback: mostly the schema is using desc / longdesc instead of description / long_description
+    if (error && error.message.includes('column')) {
+        const altObj = { 
+            id: scriptObj.id, name, game, category, image, game_id: gameIdVal,
+            desc, longdesc, features, code, 
+            featured, keyless, verified 
+        };
+        const res = await _supabase.from('scripts').insert([altObj]);
+        error = res.error;
+        if (error && error.message.includes('uuid')) {
+             delete altObj.id;
+             const res2 = await _supabase.from('scripts').insert([altObj]);
+             error = res2.error;
+        }
+    }
+
     if (!error) showToast('✅ Script eklendi!');
+    else showToast('Hata (Insert): ' + error.message);
   }
 
   await loadData(); renderAll(); closeModal('script-modal');
