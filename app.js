@@ -1367,8 +1367,8 @@ function buildChatMsg(m) {
   div.innerHTML = `
     <div class="chat-msg-avatar" style="cursor:pointer;" onclick="openProfileViewer('${esc(m.username)}')">${avatarHtml}</div>
     <div class="chat-msg-content" style="display:flex; flex-direction:column; gap:0.2rem; width:100%; max-width:85%;">
-      <div class="chat-msg-header" style="display:flex; align-items:center; gap:0.4rem; justify-content:${isOwn ? 'flex-end' : 'flex-start'}; width:100%;">
-        <span class="chat-msg-user${m.is_admin ? ' is-admin' : ''}" style="cursor:pointer;" onclick="openProfileViewer('${esc(m.username)}')">${esc(m.username)}</span>
+      <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.75rem; color:var(--text-muted); ${isOwn ? 'align-self:flex-end; flex-direction:row-reverse;' : 'align-self:flex-start;'}">
+        <span style="cursor:pointer; font-weight:bold; font-family:'Orbitron', sans-serif; color:${m.is_admin ? 'var(--accent-gold)' : 'var(--accent-purple-b)'};" onclick="openProfileViewer('${esc(m.username)}')">${esc(m.username)}</span>
         ${m.is_admin ? '<span class="chat-msg-admin-badge">\ud83d\udc51 Admin</span>' : ''}
         <span style="opacity:0.5; font-size:0.65rem;">${time}</span>
         ${adminDropdown}
