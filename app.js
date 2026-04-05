@@ -1269,7 +1269,10 @@ async function loadChatMessages() {
       empty.style.display = 'none';
   }
   container.innerHTML = '';
-  data.forEach(m => container.appendChild(buildChatMsg(m)));
+  data.forEach(m => {
+      if (m.id && document.getElementById('msg-' + m.id)) return;
+      container.appendChild(buildChatMsg(m));
+  });
   container.scrollTop = container.scrollHeight;
   if(data.length > 0) lastMsgTime = data[data.length - 1].created_at;
 
@@ -1277,6 +1280,7 @@ async function loadChatMessages() {
   chatSubscription = _supabase
     .channel('messages-realtime')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+      if (payload.new.id && document.getElementById('msg-' + payload.new.id)) return;
       const empty2 = document.getElementById('chat-empty');
       if (empty2) empty2.style.display = 'none';
       container.appendChild(buildChatMsg(payload.new));
@@ -1298,6 +1302,7 @@ async function fetchNewMessages() {
     const empty = document.getElementById('chat-empty');
     if (empty) empty.style.display = 'none';
     data.forEach(m => {
+       if (m.id && document.getElementById('msg-' + m.id)) return;
        if (m.created_at > (lastMsgTime || '')) {
            container.appendChild(buildChatMsg(m));
            lastMsgTime = m.created_at;
@@ -1310,6 +1315,7 @@ setInterval(fetchNewMessages, 3000);
 
 function buildChatMsg(m) {
   const div = document.createElement('div');
+  if (m.id) div.id = 'msg-' + m.id;
   const isOwn = currentUser && m.username === currentUser.username;
   div.className = 'chat-msg' + (isOwn ? ' own' : '');
   const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1345,27 +1351,16 @@ async function sendMessage() {
   if (!content) return;
   if (content.length > 500) { showToast('\u26a0\ufe0f Mesaj 500 karakterden uzun olamaz!'); return; }
 
-  // Optimistic UI update
-  const tempMsg = {
-    username: currentUser.username,
-    content: content,
-    is_admin: !!currentUser.isAdmin,
-    created_at: new Date().toISOString()
-  };
-  const container = document.getElementById('chat-messages');
-  const empty = document.getElementById('chat-empty');
-  if (empty) empty.style.display = 'none';
-  container.appendChild(buildChatMsg(tempMsg));
-  container.scrollTop = container.scrollHeight;
-  input.value = '';
-
   const { error } = await _supabase.from('messages').insert([{
     username: currentUser.username,
     content: content,
     is_admin: !!currentUser.isAdmin
   }]);
 
-  if (error) {
+  if (!error) {
+    input.value = '';
+    fetchNewMessages();
+  } else {
     showToast("⚠️ Mesaj gönderilemedi. Supabase'de messages tablosunu oluşturmanız gerekiyor!");
   }
 }
