@@ -1294,24 +1294,40 @@ async function loadChatMessages() {
 
 async function fetchNewMessages() {
   if (!document.getElementById('page-chat').classList.contains('active')) return; 
-  let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
-  if (lastMsgTime) {
-    query = query.gt('created_at', lastMsgTime);
-  }
+  let query = _supabase.from('messages').select('*').order('created_at', { ascending: true }).limit(100);
   const { data, error } = await query;
-  if (!error && data && data.length > 0) {
-    const container = document.getElementById('chat-messages');
-    const empty = document.getElementById('chat-empty');
-    if (empty) empty.style.display = 'none';
-    data.forEach(m => {
-       if (m.id && document.getElementById('msg-' + m.id)) return;
-       if (m.created_at > (lastMsgTime || '')) {
-           container.appendChild(buildChatMsg(m));
-           lastMsgTime = m.created_at;
-       }
-    });
-    container.scrollTop = container.scrollHeight;
+  if (error) return;
+
+  const container = document.getElementById('chat-messages');
+  const empty = document.getElementById('chat-empty');
+
+  if (!data || data.length === 0) {
+      if (empty) empty.style.display = 'block';
+      container.querySelectorAll('.chat-msg').forEach(el => el.remove());
+      return;
   }
+  
+  if (empty) empty.style.display = 'none';
+
+  const currentDOMIds = new Set([...container.querySelectorAll('.chat-msg')].map(el => el.id.replace('msg-', '')));
+  const newDataIds = new Set(data.map(m => String(m.id)));
+
+  // Remove deleted ones
+  currentDOMIds.forEach(id => {
+      if (!newDataIds.has(id)) {
+          const el = document.getElementById('msg-' + id);
+          if (el) el.remove();
+      }
+  });
+
+  // Append new ones
+  let newAppended = false;
+  data.forEach(m => {
+     if (m.id && document.getElementById('msg-' + m.id)) return;
+     container.appendChild(buildChatMsg(m));
+     newAppended = true;
+  });
+  if (newAppended) container.scrollTop = container.scrollHeight;
 }
 setInterval(fetchNewMessages, 3000);
 
@@ -1321,11 +1337,16 @@ function buildChatMsg(m) {
   const isOwn = currentUser && m.username === currentUser.username;
   div.className = 'chat-msg' + (isOwn ? ' own' : '');
   const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const adminClick = (currentUser && currentUser.isAdmin && m.username !== currentUser.username) ? `onclick="adminActionOnUser('${esc(m.username)}')" style="cursor:pointer; text-decoration:underline dashed;" title="Sustur / Mute Kaldır"` : '';
+  const delBtn = (currentUser && currentUser.isAdmin) ? `<button class="btn btn-ghost" style="font-size:0.7rem; padding:0.1rem 0.3rem; margin-left:auto; color:var(--accent-red); margin-top:-0.2rem;" onclick="deleteIndividualMessage('${m.id}')">🗑️ Sil</button>` : '';
+
   div.innerHTML = `
-    <div class="chat-msg-header">
-      <span class="chat-msg-user${m.is_admin ? ' is-admin' : ''}">${esc(m.username)}</span>
+    <div class="chat-msg-header" style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+      <span class="chat-msg-user${m.is_admin ? ' is-admin' : ''}" ${adminClick}>${esc(m.username)}</span>
       ${m.is_admin ? '<span class="chat-msg-admin-badge">\ud83d\udc51 Admin</span>' : ''}
-      <span>${time}</span>
+      <span style="opacity:0.6; font-size:0.75rem;">${time}</span>
+      ${delBtn}
     </div>
     <div class="chat-msg-text">${esc(m.content)}</div>
   `;
@@ -1335,19 +1356,59 @@ function buildChatMsg(m) {
 async function clearChat() {
   if (!currentUser || !currentUser.isAdmin) return;
   if (!confirm("Tüm sohbet mesajlarını silmek istediğinize emin misiniz? / Are you sure you want to clear chat?")) return;
-  // This uses a dummy condition because sometimes delete without matching is disallowed.
   const { error } = await _supabase.from('messages').delete().neq('username', 'nonexistent_impossible_xyz');
   if (!error) {
     showToast("✅ Sohbet temizlendi! / Chat cleared!");
-    document.getElementById('chat-messages').innerHTML = '<div class="chat-empty" id="chat-empty" data-i18n="chat_empty">No messages yet. Be the first!</div>';
-    applyTranslations();
+    fetchNewMessages(); // Immediately sync state
   } else {
     showToast("⚠️ Silinemedi rls policy check?");
   }
 }
 
+async function deleteIndividualMessage(msgId) {
+  if (!currentUser || !currentUser.isAdmin) return;
+  if (!confirm('Bu mesajı silmek istediğinize emin misiniz?')) return;
+  const { error } = await _supabase.from('messages').delete().eq('id', msgId);
+  if (!error) {
+     const el = document.getElementById('msg-' + msgId);
+     if (el) el.remove();
+     showToast('✅ Mesaj silindi!');
+  } else {
+     showToast('Hata: ' + error.message);
+  }
+}
+
+async function adminActionOnUser(username) {
+  if (!currentUser || !currentUser.isAdmin) return;
+  const mUsers = siteConfig.muted_users || [];
+  const isMuted = mUsers.includes(username);
+  const action = isMuted ? "Susturulmasını KALDIR" : "Sohbetten SUSTUR";
+  if (confirm(username + " adlı kullanıcı için işlem: " + action + " ? Senkronize olması birkaç saniye sürebilir.")) {
+      if (isMuted) {
+          siteConfig.muted_users = mUsers.filter(u => u !== username);
+      } else {
+          siteConfig.muted_users = [...mUsers, username];
+      }
+      showToast('🔄 İşleniyor...');
+      const { error } = await _supabase.from('site_config').upsert({ id: 1, config: siteConfig, announcement: siteConfig.announcement || '' });
+      if (!error) {
+          showToast('✅ İşlem başarılı!');
+      } else {
+          showToast('⚠️ Hata oluştu: ' + error.message);
+      }
+  }
+}
+
 async function sendMessage() {
   if (!currentUser) { showToast('\u26a0\ufe0f Mesaj göndermek için giriş yap!'); return; }
+  
+  // Realtime mute check
+  const { data: muteData } = await _supabase.from('site_config').select('config').eq('id', 1).single();
+  if (muteData && muteData.config && muteData.config.muted_users && muteData.config.muted_users.includes(currentUser.username)) {
+      showToast('⚠️ Yönetici tarafından sohbetten susturuldunuz!');
+      return;
+  }
+
   const input = document.getElementById('chat-input');
   const content = input.value.trim();
   if (!content) return;
