@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Roblox Script & Hub - Humanoid Premium Roblox Hacks</title>
+  <meta name="description" content="Humanoid - En iyi Roblox scriptleri, roblox hack ve exploit koleksiyonu. Ücretsiz, güvenli ve test edilmiş scriptler burada!"/>
+  <meta name="keywords" content="roblox script, roblox hack, roblox exploit, blox fruits script, pet simulator 99 script, roblox hile, humanoid hub"/>
+  
+  <!-- SEO & Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://humanoid-hub.vercel.app/">
+  <meta property="og:title" content="Roblox Script & Hub - Humanoid Premium Roblox Hacks">
+  <meta property="og:description" content="En iyi Roblox scriptleri, roblox hack ve exploit koleksiyonu.">
+  <meta property="og:image" content="https://github.com/erenzxo/RobloxHub/raw/main/preview.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loading-screen">
+    <div class="loader-box">
+      <div class="loader-logo"><span class="glitch" id="loader-title" data-text="HUMANOID">HUMANOID</span></div>
+      <div class="loader-sub">Roblox Script Hub</div>
+      <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+      <p class="loader-text">Yükleniyor...</p>
+    </div>
+  </div>
+
+  <!-- PARTICLE CANVAS -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div id="ann-bar" class="ann-bar hidden">
+    <span class="ann-bar-icon">📢</span>
+    <span id="ann-bar-text"></span>
+    <button class="ann-bar-close" onclick="document.getElementById('ann-bar').classList.add('hidden')">✕</button>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon" id="brand-icon">⚡</span>
+      <span class="brand-text glitch" id="brand-text" data-text="HUMANOID">HUMANOID</span>
+      <span class="brand-sub" id="brand-sub">SCRIPT HUB</span>
+    </div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#" class="nav-link active" data-page="home"    onclick="navigate('home',this);return false">🏠 Ana Sayfa</a></li>
+      <li><a href="#" class="nav-link"        data-page="scripts" onclick="navigate('scripts',this);return false">📜 Scripts</a></li>
+      <li><a href="#" class="nav-link"        data-page="popular" onclick="navigate('popular',this);return false">🔥 Popüler</a></li>
+      <li><a href="#" class="nav-link"        data-page="about"   onclick="navigate('about',this);return false">⚙️ Hakkında</a></li>
+      <li id="admin-nav-item" class="hidden"><a href="#" class="nav-link admin-link" data-page="admin" onclick="navigate('admin',this);return false">👑 Admin</a></li>
+    </ul>
+    <div class="nav-auth" id="nav-auth">
+      <button class="btn btn-ghost" onclick="openModal('login-modal')">Giriş Yap</button>
+      <button class="btn btn-primary" onclick="openModal('register-modal')">Kayıt Ol</button>
+    </div>
+    <div class="nav-user hidden" id="nav-user">
+      <span class="user-badge">👤 <span id="nav-username"></span></span>
+      <button class="btn btn-ghost" onclick="logout()">Çıkış</button>
+    </div>
+    <button class="hamburger" onclick="toggleMobileMenu()">☰</button>
+  </nav>
+
+  <!-- ============================== PAGES ============================== -->
+  <main id="app">
+
+    <!-- HOME -->
+    <section id="page-home" class="page active">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="hero-badge" id="hero-badge">🔥 #1 Roblox Script Hub</div>
+          <h1 class="hero-title glitch" id="hero-title" data-text="HUMANOID">HUMANOID</h1>
+          <p class="hero-subtitle" id="hero-subtitle">erenzxo tarafından hazırlanan premium, test edilmiş<br/>ve güvenli Roblox scriptleri. Tamamen ücretsiz.</p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary btn-lg" onclick="navigate('scripts',document.querySelector('[data-page=scripts]'))">📜 Scriptlere Gözat</button>
+            <button class="btn btn-ghost btn-lg" onclick="openModal('register-modal')">⚡ Hemen Katıl</button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item"><span class="stat-num" id="stat-scripts">0</span><span class="stat-label">Script</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-users">0</span><span class="stat-label">Kullanıcı</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-views">0</span><span class="stat-label">Görüntülenme</span></div>
+            <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label">Ücretsiz</span></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="orb orb-1"></div>
+          <div class="orb orb-2"></div>
+          <div class="orb orb-3"></div>
+          <div class="floating-card">
+            <div class="fc-header">
+              <span class="fc-dot red"></span><span class="fc-dot yellow"></span><span class="fc-dot green"></span>
+              <span class="fc-filename">script.lua</span>
+            </div>
+            <pre class="fc-code"><span class="c-purple">local</span> <span class="c-blue">Players</span> <span class="c-op">=</span> <span class="c-green">game</span><span class="c-op">.</span><span class="c-blue">Players</span>
+<span class="c-purple">local</span> <span class="c-blue">lp</span> <span class="c-op">=</span> <span class="c-blue">Players</span><span class="c-op">.</span><span class="c-green">LocalPlayer</span>
+
+<span class="c-comment">-- Humanoid Script Hub</span>
+<span class="c-green">loadstring</span><span class="c-op">(</span><span class="c-green">game</span><span class="c-op">:</span><span class="c-yellow">HttpGet</span><span class="c-op">(</span>
+  <span class="c-string">"humanoid.hub"</span>
+<span class="c-op">))()</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEATURED -->
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title"><span class="title-dot yellow-dot"></span>⭐ Öne Çıkan Scriptler</h2>
+          <button class="see-all-btn" onclick="navigate('scripts',document.querySelector('[data-page=scripts]'))">Tümünü Gör →</button>
+        </div>
+        <div class="scripts-grid" id="featured-grid"></div>
+        <div class="empty-state hidden" id="featured-empty"><div class="empty-icon">📜</div><p>Henüz öne çıkan script yok.</p></div>
+      </section>
+
+      <!-- RECENT -->
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title"><span class="title-dot blue-dot"></span>🕓 Son Eklenen</h2>
+        </div>
+        <div class="scripts-grid" id="recent-grid"></div>
+        <div class="empty-state hidden" id="recent-empty"><div class="empty-icon">🕓</div><p>Henüz script eklenmedi.</p></div>
+      </section>
+    </section>
+
+    <!-- SCRIPTS PAGE -->
+    <section id="page-scripts" class="page">
+      <div class="page-header">
+        <h1 class="page-title glitch" data-text="SCRIPTS">SCRIPTS</h1>
+        <p class="page-desc" id="scripts-page-desc">Tüm premium Roblox script koleksiyonu.</p>
+      </div>
+      <div class="scripts-toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" class="search-input" placeholder="Script veya oyun ara..." oninput="filterScripts()"/>
+        </div>
+        <div class="filter-tags">
+          <button class="filter-tag active" onclick="setTag('all',this)">Tümü</button>
+          <button class="filter-tag" onclick="setTag('aimbot',this)">Aimbot</button>
+          <button class="filter-tag" onclick="setTag('esp',this)">ESP</button>
+          <button class="filter-tag" onclick="setTag('speed',this)">Speed</button>
+          <button class="filter-tag" onclick="setTag('farm',this)">Farm</button>
+          <button class="filter-tag" onclick="setTag('gui',this)">GUI Hub</button>
+          <button class="filter-tag" onclick="setTag('utility',this)">Utility</button>
+        </div>
+      </div>
+      <div class="scripts-grid" id="scripts-grid"></div>
+      <div class="empty-state hidden" id="scripts-empty"><div class="empty-icon">🔍</div><p>Arama sonucu bulunamadı.</p></div>
+    </section>
+
+    <!-- POPULAR PAGE -->
+    <section id="page-popular" class="page">
+      <div class="page-header">
+        <h1 class="page-title glitch" data-text="POPÜLER">POPÜLER</h1>
+        <p class="page-desc">En çok görüntülenen scriptler</p>
+      </div>
+      <div class="scripts-grid" id="popular-grid"></div>
+      <div class="empty-state hidden" id="popular-empty"><div class="empty-icon">🔥</div><p>Henüz yeterli veri yok.</p></div>
+    </section>
+
+    <!-- DETAIL PAGE (full page, not modal) -->
+    <section id="page-detail" class="page">
+      <div id="detail-content"></div>
+    </section>
+
+    <!-- ABOUT PAGE -->
+    <section id="page-about" class="page">
+      <div class="page-header">
+        <h1 class="page-title glitch" data-text="HAKKINDA">HAKKINDA</h1>
+      </div>
+      <div class="about-grid">
+        <div class="about-card glass-card">
+          <div class="about-icon">⚡</div>
+          <h3>Kim Bu?</h3>
+          <p id="about-text-1">Humanoid Script Hub — Roblox topluluğu için premium, ücretsiz ve kaliteli scriptler.</p>
+        </div>
+        <div class="about-card glass-card">
+          <div class="about-icon">📜</div>
+          <h3>Scriptler</h3>
+          <p>Tüm scriptler bizzat test edilmiş ve optimize edilmiştir. Güvenli ve kullanımı kolaydır.</p>
+        </div>
+        <div class="about-card glass-card">
+          <div class="about-icon">🔒</div>
+          <h3>Güvenlik</h3>
+          <p>Her script dikkatli incelenmiş ve zararlı unsur içermemektedir. %100 güvenli.</p>
+        </div>
+        <div class="about-card glass-card">
+          <div class="about-icon">🌐</div>
+          <h3>İletişim</h3>
+          <p id="about-text-4">Discord veya sosyal medyadan ulaşabilirsiniz.<br/><strong id="about-discord">@erenzxo</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN PAGE -->
+    <section id="page-admin" class="page">
+      <div class="page-header" style="text-align:left">
+        <div class="admin-eyebrow">👑 YÖNETİM PANELİ</div>
+        <h1 class="page-title glitch" data-text="ADMIN">ADMIN</h1>
+        <p class="page-desc">Hoş geldin <strong style="color:var(--accent-gold)">erenzxo</strong> — Sitenizi buradan yönetin.</p>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('scripts',this)">📜 Scriptler</button>
+        <button class="admin-tab" onclick="switchAdminTab('users',this)">👥 Kullanıcılar</button>
+        <button class="admin-tab" onclick="switchAdminTab('announcement',this)">📢 Duyuru</button>
+        <button class="admin-tab" onclick="switchAdminTab('stats',this)">📊 İstatistik</button>
+        <button class="admin-tab" onclick="switchAdminTab('siteconfig',this)">⚙️ Site Ayarları</button>
+      </div>
+
+      <!-- Scripts tab -->
+      <div id="at-scripts" class="admin-panel-section">
+        <div class="admin-header-row">
+          <h2>Script Yönetimi</h2>
+          <button class="btn btn-primary" onclick="openAddScript()">➕ Yeni Script Ekle</button>
+        </div>
+        <div id="admin-scripts-list"></div>
+      </div>
+
+      <!-- Users tab -->
+      <div id="at-users" class="admin-panel-section hidden">
+        <h2 style="margin-bottom:1.25rem">Kayıtlı Kullanıcılar</h2>
+        <div id="admin-users-list"></div>
+      </div>
+
+      <!-- Announcement tab -->
+      <div id="at-announcement" class="admin-panel-section hidden">
+        <div class="glass-card ann-editor">
+          <h3>📢 Site Duyurusu</h3>
+          <p style="color:var(--text-secondary);font-size:.9rem;margin:.5rem 0 1rem">Bu metin sitenin üst kısmında duyuru bandı olarak gösterilir.</p>
+          <textarea id="ann-textarea" class="ann-textarea" rows="3" placeholder="Duyuru metni..."></textarea>
+          <div class="ann-controls">
+            <label class="toggle-wrap">
+              <input type="checkbox" id="ann-active" class="toggle-cb"/>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Duyuruyu Aktif Et</span>
+            </label>
+            <button class="btn btn-primary" onclick="saveAnnouncement()">💾 Kaydet</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats tab -->
+      <div id="at-stats" class="admin-panel-section hidden">
+        <div class="stats-grid">
+          <div class="glass-card stat-big-card"><div class="sbc-icon">📜</div><div class="sbc-n" id="sc-scripts">0</div><div class="sbc-l">Toplam Script</div></div>
+          <div class="glass-card stat-big-card"><div class="sbc-icon">👁️</div><div class="sbc-n" id="sc-views">0</div><div class="sbc-l">Toplam Görüntülenme</div></div>
+          <div class="glass-card stat-big-card"><div class="sbc-icon">👥</div><div class="sbc-n" id="sc-users">0</div><div class="sbc-l">Kayıtlı Üye</div></div>
+          <div class="glass-card stat-big-card"><div class="sbc-icon">⭐</div><div class="sbc-n" id="sc-featured">0</div><div class="sbc-l">Öne Çıkan</div></div>
+        </div>
+      </div>
+
+      <!-- Site Config tab -->
+      <div id="at-siteconfig" class="admin-panel-section hidden">
+        <div class="siteconfig-grid">
+
+          <!-- GENEL -->
+          <div class="glass-card scfg-block">
+            <div class="scfg-block-title">🏷️ Genel Bilgiler</div>
+            <div class="form-group">
+              <label>Site Adı <span class="opt-label">(Navbar & Loading)</span></label>
+              <input type="text" id="cfg-sitename" class="form-input" placeholder="HUMANOID"/>
+            </div>
+            <div class="form-group">
+              <label>Logo İkonu <span class="opt-label">(emoji)</span></label>
+              <input type="text" id="cfg-icon" class="form-input" placeholder="⚡" maxlength="4"/>
+            </div>
+            <div class="form-group">
+              <label>Navbar Alt Yazı <span class="opt-label">(SCRIPT HUB gibi)</span></label>
+              <input type="text" id="cfg-navsub" class="form-input" placeholder="SCRIPT HUB"/>
+            </div>
+            <div class="form-group">
+              <label>Tarayıcı Sekme Başlığı</label>
+              <input type="text" id="cfg-tabtitle" class="form-input" placeholder="Humanoid — Roblox Script Hub"/>
+            </div>
+          </div>
+
+          <!-- HERO -->
+          <div class="glass-card scfg-block">
+            <div class="scfg-block-title">🦸 Ana Sayfa Hero</div>
+            <div class="form-group">
+              <label>Hero Büyük Başlık</label>
+              <input type="text" id="cfg-herotitle" class="form-input" placeholder="HUMANOID"/>
+            </div>
+            <div class="form-group">
+              <label>Hero Badge Metni <span class="opt-label">(🔥 #1 gibi)</span></label>
+              <input type="text" id="cfg-herobadge" class="form-input" placeholder="🔥 #1 Roblox Script Hub"/>
+            </div>
+            <div class="form-group">
+              <label>Hero Alt Yazı</label>
+              <textarea id="cfg-herosubtitle" class="form-input form-textarea-sm" rows="2" placeholder="Premium scriptler..."></textarea>
+            </div>
+          </div>
+
+          <!-- RENKLER -->
+          <div class="glass-card scfg-block">
+            <div class="scfg-block-title">🎨 Renkler & Tema</div>
+            <div class="color-pickers">
+              <div class="color-pick-item">
+                <label>Ana Renk (Mor)</label>
+                <div class="color-pick-row">
+                  <input type="color" id="cfg-color-purple" class="color-input" value="#7c3aed"/>
+                  <input type="text" id="cfg-color-purple-hex" class="form-input color-hex" placeholder="#7c3aed" oninput="syncColorFromHex('purple')"/>
+                </div>
+              </div>
+              <div class="color-pick-item">
+                <label>Vurgu Rengi (Kırmızı)</label>
+                <div class="color-pick-row">
+                  <input type="color" id="cfg-color-red" class="color-input" value="#ef4444"/>
+                  <input type="text" id="cfg-color-red-hex" class="form-input color-hex" placeholder="#ef4444" oninput="syncColorFromHex('red')"/>
+                </div>
+              </div>
+              <div class="color-pick-item">
+                <label>Arka Plan Rengi</label>
+                <div class="color-pick-row">
+                  <input type="color" id="cfg-color-bg" class="color-input" value="#050508"/>
+                  <input type="text" id="cfg-color-bg-hex" class="form-input color-hex" placeholder="#050508" oninput="syncColorFromHex('bg')"/>
+                </div>
+              </div>
+              <div class="color-pick-item">
+                <label>Altın / Gold Renk</label>
+                <div class="color-pick-row">
+                  <input type="color" id="cfg-color-gold" class="color-input" value="#f59e0b"/>
+                  <input type="text" id="cfg-color-gold-hex" class="form-input color-hex" placeholder="#f59e0b" oninput="syncColorFromHex('gold')"/>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-ghost" style="margin-top:.75rem;width:100%" onclick="resetColors()">↩ Varsayılan Renklere Dön</button>
+          </div>
+
+          <!-- HAKKINDA -->
+          <div class="glass-card scfg-block">
+            <div class="scfg-block-title">⚙️ Hakkında Sayfası</div>
+            <div class="form-group">
+              <label>"Kim Bu?" Kartı Açıklaması</label>
+              <textarea id="cfg-about1" class="form-input form-textarea-sm" rows="2" placeholder="Site açıklaması..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Discord / İletişim Adresi</label>
+              <input type="text" id="cfg-discord" class="form-input" placeholder="@erenzxo"/>
+            </div>
+          </div>
+
+          <!-- FOOTER BUTTONS -->
+          <div class="glass-card scfg-block scfg-full">
+            <div class="scfg-block-title">💾 Değişiklikleri Uygula</div>
+            <p style="color:var(--text-secondary);font-size:.88rem;margin-bottom:1rem">Kaydet butonuna bastıktan sonra tüm değişiklikler anında sitede görünür ve tarayıcıya kaydedilir.</p>
+            <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="saveSiteConfig()">💾 Kaydet & Uygula</button>
+              <button class="btn btn-ghost" onclick="previewSiteConfig()">👁️ Önizle</button>
+              <button class="btn btn-danger" onclick="resetSiteConfig()">🗑️ Tümünü Sıfırla</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ============================== MODALS ============================== -->
+
+  <!-- LOGIN -->
+  <div class="modal-overlay" id="login-modal" onclick="overlayClose(event,'login-modal')">
+    <div class="modal glass-card">
+      <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
+      <div class="modal-icon">🔐</div>
+      <h2 class="modal-title">Giriş Yap</h2>
+      <div class="form-group">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="l-user" class="form-input" placeholder="kullanıcı adı"/>
+      </div>
+      <div class="form-group">
+        <label>Şifre</label>
+        <input type="password" id="l-pass" class="form-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div class="form-error hidden" id="l-err">Kullanıcı adı veya şifre hatalı!</div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()">Giriş Yap ⚡</button>
+      <p class="modal-switch">Hesabın yok mu? <a href="#" onclick="switchModal('login-modal','register-modal');return false">Kayıt Ol</a></p>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="modal-overlay" id="register-modal" onclick="overlayClose(event,'register-modal')">
+    <div class="modal glass-card">
+      <button class="modal-close" onclick="closeModal('register-modal')">✕</button>
+      <div class="modal-icon">✨</div>
+      <h2 class="modal-title">Kayıt Ol</h2>
+      <div class="form-group">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="r-user" class="form-input" placeholder="kullanıcı adı"/>
+      </div>
+      <div class="form-group">
+        <label>E-posta</label>
+        <input type="email" id="r-email" class="form-input" placeholder="email@ornek.com"/>
+      </div>
+      <div class="form-group">
+        <label>Şifre</label>
+        <input type="password" id="r-pass" class="form-input" placeholder="••••••••"/>
+      </div>
+      <div class="form-error hidden" id="r-err">Hata!</div>
+      <div class="form-success hidden" id="r-ok">✅ Kayıt başarılı! Giriş yapılıyor...</div>
+      <button class="btn btn-primary btn-full" onclick="doRegister()">Kayıt Ol ✨</button>
+      <p class="modal-switch">Hesabın var mı? <a href="#" onclick="switchModal('register-modal','login-modal');return false">Giriş Yap</a></p>
+    </div>
+  </div>
+
+  <!-- ADD/EDIT SCRIPT -->
+  <div class="modal-overlay" id="script-modal" onclick="overlayClose(event,'script-modal')">
+    <div class="modal modal-lg glass-card">
+      <button class="modal-close" onclick="closeModal('script-modal')">✕</button>
+      <div class="modal-icon">📝</div>
+      <h2 class="modal-title" id="sm-title">Script Ekle</h2>
+      <input type="hidden" id="sm-id"/>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Script Adı *</label>
+          <input type="text" id="sm-name" class="form-input" placeholder="Örn: Speed Hack Pro"/>
+        </div>
+        <div class="form-group">
+          <label>Oyun / Game</label>
+          <input type="text" id="sm-game" class="form-input" placeholder="Örn: Blox Fruits"/>
+        </div>
+        <div class="form-group">
+          <label>Kategori</label>
+          <select id="sm-cat" class="form-input">
+            <option value="utility">Utility</option>
+            <option value="aimbot">Aimbot</option>
+            <option value="esp">ESP</option>
+            <option value="speed">Speed</option>
+            <option value="farm">Farm</option>
+            <option value="gui">GUI Hub</option>
+          </select>
+        </div>
+        <div class="form-group fg-full">
+          <label>Görsel <span class="opt-label">(dosya yükle veya URL gir)</span></label>
+          <div class="img-upload-box" id="img-upload-box" onclick="document.getElementById('sm-img-file').click()">
+            <div class="img-upload-placeholder" id="img-placeholder">
+              <div class="img-upload-icon">🖼️</div>
+              <div class="img-upload-text">Görsel yüklemek için tıkla</div>
+              <div class="img-upload-sub">PNG, JPG, GIF, WebP desteklenir</div>
+            </div>
+            <img id="img-preview" class="img-preview hidden" src="" alt="Önizleme"/>
+          </div>
+          <input type="file" id="sm-img-file" accept="image/*" class="hidden" onchange="handleImageFile(event)"/>
+          <div class="img-or-divider"><span>— veya URL gir —</span></div>
+          <div class="img-url-row">
+            <input type="text" id="sm-img" class="form-input" placeholder="https://i.imgur.com/..."
+                   oninput="handleImageUrl(this.value)"/>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="clearImage()">✕ Temizle</button>
+          </div>
+        </div>
+        <div class="form-group fg-full">
+          <label>Kısa Açıklama *</label>
+          <input type="text" id="sm-desc" class="form-input" placeholder="Scriptin ne yaptığını kısaca açıkla"/>
+        </div>
+        <div class="form-group fg-full">
+          <label>Detaylı Açıklama</label>
+          <textarea id="sm-longdesc" class="form-input form-textarea-sm" rows="3" placeholder="Detaylı açıklama, notlar..."></textarea>
+        </div>
+        <div class="form-group fg-full">
+          <label>Özellikler <span class="opt-label">(her satıra bir özellik)</span></label>
+          <textarea id="sm-features" class="form-input form-textarea-sm" rows="4" placeholder="WalkSpeed = 999&#10;JumpPower = 100&#10;Anti-Kick&#10;Auto Farm"></textarea>
+        </div>
+        <div class="form-group fg-full">
+          <label>Script Kodu *</label>
+          <textarea id="sm-code" class="form-input form-textarea-code" rows="8" placeholder="-- Lua kodunuzu yapıştırın..."></textarea>
+        </div>
+        <div class="form-group fg-full form-checks">
+          <label class="toggle-wrap">
+            <input type="checkbox" id="sm-featured" class="toggle-cb"/>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">⭐ Öne Çıkan</span>
+          </label>
+          <label class="toggle-wrap">
+            <input type="checkbox" id="sm-keyless" class="toggle-cb"/>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">🔓 Key Gerektirmez</span>
+          </label>
+          <label class="toggle-wrap">
+            <input type="checkbox" id="sm-verified" class="toggle-cb" checked/>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">✅ Test Edildi</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('script-modal')">İptal</button>
+        <button class="btn btn-primary" onclick="saveScript()">💾 Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
