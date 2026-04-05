@@ -312,7 +312,17 @@ async function doLogin() {
   const { data, error } = await _supabase.from('users').select('*').or(`username.eq."${u}",email.eq."${u}"`).eq('password', p).single();
   
   if (data) {
-    currentUser = { username: data.username, isAdmin: data.role === 'admin', email: data.email || '—', joinedAt: data.joined_at };
+    currentUser = { 
+      id: data.id,
+      username: data.username, 
+      isAdmin: data.role === 'admin', 
+      isHelper: data.role === 'helper',
+      email: data.email || '—', 
+      joinedAt: data.joined_at,
+      avatarUrl: data.avatar_url,
+      profileColor: data.profile_color,
+      bio: data.bio
+    };
     localStorage.setItem('hmd_session', JSON.stringify(currentUser));
     applyUserUI(); closeModal('login-modal');
     showToast('✅ Hoş geldin, ' + data.username + '!');
@@ -367,10 +377,11 @@ function logout() {
 function applyUserUI() {
   const loggedIn = !!currentUser;
   const isAdmin  = loggedIn && currentUser.isAdmin;
+  const isHelper = loggedIn && currentUser.isHelper;
 
   document.getElementById('nav-auth').classList.toggle('hidden', loggedIn);
   document.getElementById('nav-user').classList.toggle('hidden', !loggedIn);
-  document.getElementById('admin-nav-item').classList.toggle('hidden', !isAdmin);
+  document.getElementById('admin-nav-item').classList.toggle('hidden', !(isAdmin || isHelper));
 
   // Chat input state & clear chat button
   const ciEl = document.getElementById('chat-logged-in');
@@ -898,17 +909,49 @@ function renderAdminUsers() {
   users.forEach(u => {
     const item = document.createElement('div');
     item.className = 'admin-user-item';
+    
+    const isHelper = u.role === 'helper';
+    const roleBadge = isHelper ? '<span class="aui-badge-helper" style="margin-left:.5rem">YARDIMCI</span>' : '';
+    
+    // Role action button (Admin only)
+    let roleAction = '';
+    if (currentUser && currentUser.isAdmin) {
+       if (isHelper) {
+          roleAction = `<button class="btn btn-ghost btn-sm" onclick="setUserRole('${esc(u.username)}', 'user')">Yetkiyi Al</button>`;
+       } else {
+          roleAction = `<button class="btn btn-primary btn-sm" style="background:var(--accent-green)" onclick="setUserRole('${esc(u.username)}', 'helper')">Yardımcı Yap</button>`;
+       }
+    }
+
     item.innerHTML = `
       <div class="aui-name">
-        <div class="aui-avatar">${u.username[0].toUpperCase()}</div>
-        ${esc(u.username)}
+        <div class="aui-avatar" style="background:${u.profile_color || 'var(--accent-purple)'}">${u.username[0].toUpperCase()}</div>
+        ${esc(u.username)} ${roleBadge}
       </div>
       <div class="aui-email">${esc(u.email || '—')}</div>
       <div class="aui-date">${u.joinedAt || '—'}</div>
-      <div><button class="btn btn-danger btn-sm" onclick="deleteUser('${esc(u.username)}')">Sil</button></div>
+      <div class="asi-actions" style="display:flex;gap:.5rem">
+        ${roleAction}
+        ${(currentUser && currentUser.isAdmin) ? `<button class="btn btn-danger btn-sm" onclick="deleteUser('${esc(u.username)}')">Sil</button>` : ''}
+      </div>
     `;
     list.appendChild(item);
   });
+}
+
+async function setUserRole(username, newRole) {
+  if (!currentUser || !currentUser.isAdmin) return;
+  const targetUser = users.find(u => u.username === username);
+  if (!targetUser) return;
+
+  const { error } = await _supabase.from('users').update({ role: newRole }).eq('username', username);
+  if (!error) {
+     showToast(`✅ ${username} artık ${newRole === 'helper' ? 'Yardımcı' : 'Kullanıcı'}!`);
+     await loadData();
+     renderAdminUsers();
+  } else {
+     showToast('⚠️ Yetki değiştirilemedi: ' + error.message);
+  }
 }
 
 function deleteUser(username) {
@@ -922,6 +965,12 @@ function deleteUser(username) {
 //  ADMIN — TABS & ANNOUNCEMENT
 // ============================================================
 function switchAdminTab(tab, el) {
+  // If helper, only allow users tab
+  if (currentUser && currentUser.isHelper && tab !== 'users') {
+     showToast('⚠️ Sadece Kullanıcılar listesine erişim yetkiniz var.');
+     return;
+  }
+
   document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   document.querySelectorAll('.admin-panel-section').forEach(s => s.classList.add('hidden'));
@@ -1363,12 +1412,28 @@ function buildChatMsg(m) {
   const adminDropdown = (currentUser && currentUser.isAdmin && !isOwn) ? 
      `<button style="background:none; border:none; cursor:pointer; color:var(--text-muted); font-size:1rem; margin-left:auto;" onclick="deleteIndividualMessage('${m.id}')" title="Bu mesajı sil">🗑️</button>` : '';
 
+  // Role details
+  let roleBadge = '';
+  let nameColor = 'var(--accent-purple-b)';
+  
+  if (m.is_admin) {
+    roleBadge = '<span class="chat-msg-admin-badge">👑 Admin</span>';
+    nameColor = 'var(--accent-gold)';
+  } else {
+    // Check if user is helper
+    const userObj = users.find(u => u.username === m.username);
+    if (userObj && userObj.role === 'helper') {
+      roleBadge = '<span class="chat-msg-helper-badge">🛡️ Yardımcı</span>';
+      nameColor = 'var(--accent-green-b)';
+    }
+  }
+
   div.innerHTML = `
     <div class="chat-msg-avatar" style="cursor:pointer;" onclick="openProfileViewer('${esc(m.username)}')">${avatarHtml}</div>
     <div style="display:flex; flex-direction:column; gap:0.2rem; align-items:${isOwn ? 'flex-end' : 'flex-start'}; max-width:85%;">
       <div style="display:flex; flex-direction:${isOwn ? 'row-reverse' : 'row'}; align-items:center; gap:0.4rem; font-size:0.75rem; color:var(--text-muted);">
-        <span style="cursor:pointer; font-weight:bold; font-family:'Orbitron', sans-serif; color:${m.is_admin ? 'var(--accent-gold)' : 'var(--accent-purple-b)'};" onclick="openProfileViewer('${esc(m.username)}')">${esc(m.username)}</span>
-        ${m.is_admin ? '<span class="chat-msg-admin-badge">\ud83d\udc51 Admin</span>' : ''}
+        <span style="cursor:pointer; font-weight:bold; font-family:'Orbitron', sans-serif; color:${nameColor};" onclick="openProfileViewer('${esc(m.username)}')">${esc(m.username)}</span>
+        ${roleBadge}
         <span style="opacity:0.5; font-size:0.65rem;">${time}</span>
         ${adminDropdown}
       </div>
@@ -1473,10 +1538,14 @@ function openProfileViewer(username) {
   document.getElementById('uv-avatar').innerHTML = u.avatar_url ? `<img src="${esc(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;"/>` : '👤';
   
   const adminActions = document.getElementById('uv-admin-actions');
-  if (currentUser && currentUser.isAdmin && u.username !== currentUser.username) {
+  const isPrivileged = currentUser && (currentUser.isAdmin || currentUser.isHelper);
+  
+  if (isPrivileged && u.username !== currentUser.username) {
       adminActions.classList.remove('hidden');
       const isMuted = siteConfig.muted_users && siteConfig.muted_users.includes(u.username);
       const btnMute = document.getElementById('uv-btn-mute');
+      const btnDeleteAll = document.getElementById('uv-btn-deleteAll');
+
       if (isMuted) {
           btnMute.innerText = 'Susturmayı Kaldır (Unmute)';
           btnMute.onclick = () => uvActionMute(u.username, false);
@@ -1484,7 +1553,14 @@ function openProfileViewer(username) {
           btnMute.innerText = 'Sustur / Mute';
           btnMute.onclick = () => uvActionMute(u.username, true);
       }
-      document.getElementById('uv-btn-deleteAll').onclick = () => uvActionDeleteAll(u.username);
+      
+      // Helpers cannot delete all messages
+      if (currentUser.isHelper) {
+          btnDeleteAll.classList.add('hidden');
+      } else {
+          btnDeleteAll.classList.remove('hidden');
+          btnDeleteAll.onclick = () => uvActionDeleteAll(u.username);
+      }
   } else {
       adminActions.classList.add('hidden');
   }
@@ -1492,7 +1568,7 @@ function openProfileViewer(username) {
 }
 
 async function uvActionMute(username, doMute) {
-  if (!currentUser || !currentUser.isAdmin) return;
+  if (!currentUser || (!currentUser.isAdmin && !currentUser.isHelper)) return;
   const mUsers = siteConfig.muted_users || [];
   if (doMute) {
       siteConfig.muted_users = [...mUsers, username];

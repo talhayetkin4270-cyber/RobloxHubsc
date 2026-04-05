@@ -46,6 +46,7 @@
   --accent-cyan:       #06b6d4;
   --accent-gold:       #f59e0b;
   --accent-green:      #22c55e;
+  --accent-green-b:    #4ade80;
 
   --text-primary:      #f0f0ff;
   --text-secondary:    #9999cc;
@@ -1157,4 +1158,42 @@ select.form-input option { background: var(--bg-secondary); }
   transition: color .15s;
 }
 .discord-link:hover { color: #a0b4ff !important; }
+
+/* ==============================================================
+   CHAT ROLES
+   ============================================================== */
+.chat-msg-admin-badge {
+  background: rgba(245,158,11,.15);
+  border: 1px solid rgba(245,158,11,.3);
+  color: var(--accent-gold);
+  padding: .12rem .45rem;
+  border-radius: 4px;
+  font-size: .62rem;
+  font-weight: 800;
+  margin-left: .35rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.chat-msg-helper-badge {
+  background: rgba(34,197,94,.15);
+  border: 1px solid rgba(34,197,94,.3);
+  color: var(--accent-green-b);
+  padding: .12rem .45rem;
+  border-radius: 4px;
+  font-size: .62rem;
+  font-weight: 800;
+  margin-left: .35rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.aui-badge-helper {
+  background: rgba(34,197,94,.12);
+  border: 1px solid rgba(34,197,94,.25);
+  color: var(--accent-green-b);
+  padding: .2rem .6rem;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 700;
+}
 
