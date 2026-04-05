@@ -28,7 +28,7 @@
       <div class="loader-logo"><span class="glitch" id="loader-title" data-text="HUMANOID">HUMANOID</span></div>
       <div class="loader-sub">Roblox Script Hub</div>
       <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
-      <p class="loader-text">Yükleniyor...</p>
+      <p class="loader-text" data-i18n="loader_txt">Yükleniyor...</p>
     </div>
   </div>
 
@@ -125,14 +125,14 @@
           <h1 class="hero-title glitch" id="hero-title" data-text="HUMANOID">HUMANOID</h1>
           <p class="hero-subtitle" id="hero-subtitle">erenzxo tarafından hazırlanan premium, test edilmiş<br/>ve güvenli Roblox scriptleri. Tamamen ücretsiz.</p>
           <div class="hero-buttons">
-            <button class="btn btn-primary btn-lg" onclick="navigate('scripts',document.querySelector('[data-page=scripts]'))">📜 Scriptlere Gözat</button>
-            <button class="btn btn-ghost btn-lg" onclick="openModal('register-modal')">⚡ Hemen Katıl</button>
+            <button class="btn btn-primary btn-lg" onclick="navigate('scripts',document.querySelector('[data-page=scripts]'))" data-i18n="hero_btn_scripts">📜 Scriptlere Gözat</button>
+            <button class="btn btn-ghost btn-lg" onclick="openModal('register-modal')" data-i18n="hero_btn_join">⚡ Hemen Katıl</button>
           </div>
           <div class="hero-stats">
-            <div class="stat-item"><span class="stat-num" id="stat-scripts">0</span><span class="stat-label">Script</span></div>
-            <div class="stat-item"><span class="stat-num" id="stat-users">0</span><span class="stat-label">Kullanıcı</span></div>
-            <div class="stat-item"><span class="stat-num" id="stat-views">0</span><span class="stat-label">Görüntülenme</span></div>
-            <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label">Ücretsiz</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-scripts">0</span><span class="stat-label" data-i18n="stat_scripts">Script</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-users">0</span><span class="stat-label" data-i18n="stat_users">Kullanıcı</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-views">0</span><span class="stat-label" data-i18n="stat_views">Görüntülenme</span></div>
+            <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label" data-i18n="stat_free">Ücretsiz</span></div>
           </div>
         </div>
         <div class="hero-visual">
@@ -158,20 +158,20 @@
       <!-- FEATURED -->
       <section class="section">
         <div class="section-head">
-          <h2 class="section-title"><span class="title-dot yellow-dot"></span>⭐ Öne Çıkan Scriptler</h2>
-          <button class="see-all-btn" onclick="navigate('scripts',document.querySelector('[data-page=scripts]'))">Tümünü Gör →</button>
+          <h2 class="section-title"><span class="title-dot yellow-dot"></span><span data-i18n="featured_title">⭐ Öne Çıkan Scriptler</span></h2>
+          <button class="see-all-btn" onclick="navigate('scripts',document.querySelector('[data-page=scripts]'))" data-i18n="see_all">Tümünü Gör →</button>
         </div>
         <div class="scripts-grid" id="featured-grid"></div>
-        <div class="empty-state hidden" id="featured-empty"><div class="empty-icon">📜</div><p>Henüz öne çıkan script yok.</p></div>
+        <div class="empty-state hidden" id="featured-empty"><div class="empty-icon">📜</div><p data-i18n="featured_empty">Henüz öne çıkan script yok.</p></div>
       </section>
 
       <!-- RECENT -->
       <section class="section">
         <div class="section-head">
-          <h2 class="section-title"><span class="title-dot blue-dot"></span>🕓 Son Eklenen</h2>
+          <h2 class="section-title"><span class="title-dot blue-dot"></span><span data-i18n="recent_title">🕓 Son Eklenen</span></h2>
         </div>
         <div class="scripts-grid" id="recent-grid"></div>
-        <div class="empty-state hidden" id="recent-empty"><div class="empty-icon">🕓</div><p>Henüz script eklenmedi.</p></div>
+        <div class="empty-state hidden" id="recent-empty"><div class="empty-icon">🕓</div><p data-i18n="recent_empty">Henüz script eklenmedi.</p></div>
       </section>
     </section>
 
@@ -188,24 +188,25 @@
         </div>
       </div>
       <div class="scripts-grid" id="scripts-grid"></div>
-      <div class="empty-state hidden" id="scripts-empty"><div class="empty-icon">🔍</div><p>Arama sonucu bulunamadı.</p></div>
+      <div class="empty-state hidden" id="scripts-empty"><div class="empty-icon">🔍</div><p data-i18n="search_empty">Arama sonucu bulunamadı.</p></div>
     </section>
 
     <!-- POPULAR PAGE -->
     <section id="page-popular" class="page">
       <div class="page-header">
-        <h1 class="page-title glitch" data-text="POPÜLER">POPÜLER</h1>
-        <p class="page-desc">En çok görüntülenen scriptler</p>
+        <h1 class="page-title glitch" data-text="POPULAR" data-i18n="pop_title">POPULAR</h1>
+        <p class="page-desc" data-i18n="pop_desc">Most viewed scripts</p>
       </div>
       <div class="scripts-grid" id="popular-grid"></div>
-      <div class="empty-state hidden" id="popular-empty"><div class="empty-icon">🔥</div><p>Henüz yeterli veri yok.</p></div>
+      <div class="empty-state hidden" id="popular-empty"><div class="empty-icon">🔥</div><p data-i18n="pop_empty">Not enough data yet.</p></div>
     </section>
 
     <!-- CHAT PAGE -->
     <section id="page-chat" class="page">
-      <div class="page-header">
+      <div class="page-header" style="position:relative;">
         <h1 class="page-title glitch" data-text="CHAT">CHAT</h1>
         <p class="page-desc" data-i18n="chat_desc">Ask questions, share ideas with the community.</p>
+        <button class="btn btn-danger btn-sm hidden" id="chat-clear-btn" style="position:absolute; right:1.5rem; top:50%; transform:translateY(-50%);" onclick="clearChat()" data-i18n="chat_clear">🧹 Sohbeti Temizle</button>
       </div>
       <div class="chat-container">
         <div class="chat-messages" id="chat-messages">
@@ -231,23 +232,23 @@
     <!-- ABOUT PAGE -->
     <section id="page-about" class="page">
       <div class="page-header">
-        <h1 class="page-title glitch" data-text="HAKKINDA">HAKKINDA</h1>
+        <h1 class="page-title glitch" data-text="ABOUT" data-i18n="about_title">ABOUT</h1>
       </div>
       <div class="about-grid">
         <div class="about-card glass-card">
           <div class="about-icon">⚡</div>
-          <h3>Kim Bu?</h3>
-          <p id="about-text-1">Humanoid Script Hub — Roblox topluluğu için premium, ücretsiz ve kaliteli scriptler.</p>
+          <h3 data-i18n="about_q1">Who Are We?</h3>
+          <p id="about-text-1" data-i18n="about_a1">Humanoid Script Hub — Premium, free, and high-quality scripts for the Roblox community.</p>
         </div>
         <div class="about-card glass-card">
           <div class="about-icon">📜</div>
-          <h3>Scriptler</h3>
-          <p>Tüm scriptler bizzat test edilmiş ve optimize edilmiştir. Güvenli ve kullanımı kolaydır.</p>
+          <h3 data-i18n="about_q2">Scripts</h3>
+          <p data-i18n="about_a2">All scripts are personally tested and optimized. Safe and easy to use.</p>
         </div>
         <div class="about-card glass-card">
           <div class="about-icon">🔒</div>
-          <h3>Güvenlik</h3>
-          <p>Her script dikkatli incelenmiş ve zararlı unsur içermemektedir. %100 güvenli.</p>
+          <h3 data-i18n="about_q3">Security</h3>
+          <p data-i18n="about_a3">Every script is carefully examined and contains no harmful elements. 100% secure.</p>
         </div>
         <div class="about-card glass-card">
           <div class="about-icon">🌐</div>
@@ -260,24 +261,24 @@
     <!-- ADMIN PAGE -->
     <section id="page-admin" class="page">
       <div class="page-header" style="text-align:left">
-        <div class="admin-eyebrow">👑 YÖNETİM PANELİ</div>
+        <div class="admin-eyebrow" data-i18n="admin_panel">👑 YÖNETİM PANELİ</div>
         <h1 class="page-title glitch" data-text="ADMIN">ADMIN</h1>
-        <p class="page-desc">Hoş geldin <strong style="color:var(--accent-gold)">erenzxo</strong> — Sitenizi buradan yönetin.</p>
+        <p class="page-desc"><span data-i18n="admin_welcome">Hoş geldin</span> <strong style="color:var(--accent-gold)">erenzxo</strong> — <span data-i18n="admin_manage">Sitenizi buradan yönetin.</span></p>
       </div>
 
       <div class="admin-tabs">
-        <button class="admin-tab active" onclick="switchAdminTab('scripts',this)">📜 Scriptler</button>
-        <button class="admin-tab" onclick="switchAdminTab('users',this)">👥 Kullanıcılar</button>
-        <button class="admin-tab" onclick="switchAdminTab('announcement',this)">📢 Duyuru</button>
-        <button class="admin-tab" onclick="switchAdminTab('stats',this)">📊 İstatistik</button>
-        <button class="admin-tab" onclick="switchAdminTab('siteconfig',this)">⚙️ Site Ayarları</button>
+        <button class="admin-tab active" onclick="switchAdminTab('scripts',this)" data-i18n="admin_tab_scripts">📜 Scriptler</button>
+        <button class="admin-tab" onclick="switchAdminTab('users',this)" data-i18n="admin_tab_users">👥 Kullanıcılar</button>
+        <button class="admin-tab" onclick="switchAdminTab('announcement',this)" data-i18n="admin_tab_ann">📢 Duyuru</button>
+        <button class="admin-tab" onclick="switchAdminTab('stats',this)" data-i18n="admin_tab_stats">📊 İstatistik</button>
+        <button class="admin-tab" onclick="switchAdminTab('siteconfig',this)" data-i18n="admin_tab_config">⚙️ Site Ayarları</button>
       </div>
 
       <!-- Scripts tab -->
       <div id="at-scripts" class="admin-panel-section">
         <div class="admin-header-row">
-          <h2>Script Yönetimi</h2>
-          <button class="btn btn-primary" onclick="openAddScript()">➕ Yeni Script Ekle</button>
+          <h2 data-i18n="admin_tab_scripts">📜 Scriptler</h2>
+          <button class="btn btn-primary" onclick="openAddScript()" data-i18n="admin_add_script">➕ Yeni Script Ekle</button>
         </div>
         <div id="admin-scripts-list"></div>
       </div>
@@ -431,18 +432,18 @@
     <div class="modal glass-card">
       <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
       <div class="modal-icon">🔐</div>
-      <h2 class="modal-title">Giriş Yap</h2>
+      <h2 class="modal-title" data-i18n="login_title">Giriş Yap</h2>
       <div class="form-group">
-        <label>Kullanıcı Adı</label>
-        <input type="text" id="l-user" class="form-input" placeholder="kullanıcı adı"/>
+        <label data-i18n="login_user">Kullanıcı Adı</label>
+        <input type="text" id="l-user" class="form-input" data-i18n-placeholder="login_user" placeholder="kullanıcı adı"/>
       </div>
       <div class="form-group">
-        <label>Şifre</label>
-        <input type="password" id="l-pass" class="form-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <label data-i18n="login_pass">Şifre</label>
+        <input type="password" id="l-pass" class="form-input" data-i18n-placeholder="login_pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
       </div>
-      <div class="form-error hidden" id="l-err">Kullanıcı adı veya şifre hatalı!</div>
-      <button class="btn btn-primary btn-full" onclick="doLogin()">Giriş Yap ⚡</button>
-      <p class="modal-switch">Hesabın yok mu? <a href="#" onclick="switchModal('login-modal','register-modal');return false">Kayıt Ol</a></p>
+      <div class="form-error hidden" id="l-err" data-i18n="login_err">Kullanıcı adı veya şifre hatalı!</div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()" data-i18n="btn_login_submit">Giriş Yap ⚡</button>
+      <p class="modal-switch"><span data-i18n="no_account">Hesabın yok mu?</span> <a href="#" onclick="switchModal('login-modal','register-modal');return false" data-i18n="btn_register">Kayıt Ol</a></p>
     </div>
   </div>
 
@@ -451,23 +452,23 @@
     <div class="modal glass-card">
       <button class="modal-close" onclick="closeModal('register-modal')">✕</button>
       <div class="modal-icon">✨</div>
-      <h2 class="modal-title">Kayıt Ol</h2>
+      <h2 class="modal-title" data-i18n="register_title">Kayıt Ol</h2>
       <div class="form-group">
-        <label>Kullanıcı Adı</label>
-        <input type="text" id="r-user" class="form-input" placeholder="kullanıcı adı"/>
+        <label data-i18n="reg_user">Kullanıcı Adı</label>
+        <input type="text" id="r-user" class="form-input" data-i18n-placeholder="reg_user" placeholder="kullanıcı adı"/>
       </div>
       <div class="form-group">
         <label>E-posta</label>
         <input type="email" id="r-email" class="form-input" placeholder="email@ornek.com"/>
       </div>
       <div class="form-group">
-        <label>Şifre</label>
-        <input type="password" id="r-pass" class="form-input" placeholder="••••••••"/>
+        <label data-i18n="login_pass">Şifre</label>
+        <input type="password" id="r-pass" class="form-input" data-i18n-placeholder="login_pass" placeholder="••••••••"/>
       </div>
       <div class="form-error hidden" id="r-err">Hata!</div>
-      <div class="form-success hidden" id="r-ok">✅ Kayıt başarılı! Giriş yapılıyor...</div>
-      <button class="btn btn-primary btn-full" onclick="doRegister()">Kayıt Ol ✨</button>
-      <p class="modal-switch">Hesabın var mı? <a href="#" onclick="switchModal('register-modal','login-modal');return false">Giriş Yap</a></p>
+      <div class="form-success hidden" id="r-ok" data-i18n="reg_ok">✅ Kayıt başarılı! Giriş yapılıyor...</div>
+      <button class="btn btn-primary btn-full" onclick="doRegister()" data-i18n="btn_reg_submit">Kayıt Ol ✨</button>
+      <p class="modal-switch"><span data-i18n="has_account">Hesabın var mı?</span> <a href="#" onclick="switchModal('register-modal','login-modal');return false" data-i18n="btn_login">Giriş Yap</a></p>
     </div>
   </div>
 

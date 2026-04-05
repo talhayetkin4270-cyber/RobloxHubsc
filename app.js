@@ -20,6 +20,26 @@ const TRANSLATIONS = {
     about_contact: 'Contact', about_contact_desc: 'Reach us on Discord or social media.',
     view_btn: 'View →', copy_btn: '📋 Copy', copied_btn: '✅ Copied!',
     all_filter: 'All',
+    featured_title: '⭐ Featured Scripts', see_all: 'See All →', featured_empty: 'No featured scripts yet.',
+    recent_title: '🕓 Recently Added', recent_empty: 'No scripts added yet.',
+    pop_title: 'POPULAR', pop_desc: 'Most viewed scripts', pop_empty: 'Not enough data yet.',
+    about_title: 'ABOUT', 
+    about_q1: 'Who Are We?', about_a1: 'Humanoid Script Hub — Premium, free, and high-quality scripts for the Roblox community.',
+    about_q2: 'Scripts', about_a2: 'All scripts are personally tested and optimized. Safe and easy to use.',
+    about_q3: 'Security', about_a3: 'Every script is carefully examined and contains no harmful elements. 100% secure.',
+    login_title: 'Log In', login_user: 'Username', login_pass: 'Password',
+    login_err: 'Invalid username or password!', btn_login_submit: 'Log In ⚡', no_account: "Don't have an account?",
+    register_title: 'Register', reg_user: 'Username', reg_ok: '✅ Registration successful! Logging in...',
+    btn_reg_submit: 'Register ✨', has_account: 'Already have an account?',
+    loader_txt: 'Loading...', hero_btn_scripts: '📜 Browse Scripts', hero_btn_join: '⚡ Join Now',
+    stat_scripts: 'Scripts', stat_users: 'Users', stat_views: 'Views', stat_free: 'Free',
+    search_empty: 'No results found.', admin_panel: '👑 ADMIN PANEL', admin_manage: 'Manage your site here.',
+    admin_tab_scripts: '📜 Scripts', admin_tab_users: '👥 Users', admin_tab_ann: '📢 Announcement', 
+    admin_tab_stats: '📊 Stats', admin_tab_config: '⚙️ Settings', admin_add_script: '➕ Add Script',
+    detail_desc: '📄 Description', detail_features: '⚡ Features', detail_info: 'ℹ️ Info',
+    info_game: '🎮 Game', info_cat: '📂 Category', info_views: '👁 Views', info_key: '🔑 Key System',
+    info_status: '✅ Status', info_added: '📅 Added', copy_code: '📋 COPY CODE', btn_edit: '✏️ Edit', btn_delete: '🗑️ Delete',
+    chat_clear: '🧹 Clear Chat'
   },
   tr: {
     nav_home: '🏠 Ana Sayfa', nav_scripts: '📜 Scriptler',
@@ -31,9 +51,29 @@ const TRANSLATIONS = {
     chat_placeholder: 'Mesaj yaz...', chat_send: 'Gönder',
     chat_login_prompt: 'Mesaj göndermek için giriş yap.',
     pp_customize: 'Profil Rengi', pp_avatar_url: 'Avatar URL',
-    about_contact: 'İletişim', about_contact_desc: 'Discord’dan bize ulaşabörsiniz.',
+    about_contact: 'İletişim', about_contact_desc: 'Discord’dan bize ulaşabilirsiniz.',
     view_btn: 'Görüntüle →', copy_btn: '📋 Kopyala', copied_btn: '✅ Kopyalandı!',
     all_filter: 'Tümü',
+    featured_title: '⭐ Öne Çıkan Scriptler', see_all: 'Tümünü Gör →', featured_empty: 'Henüz öne çıkan script yok.',
+    recent_title: '🕓 Son Eklenen', recent_empty: 'Henüz script eklenmedi.',
+    pop_title: 'POPÜLER', pop_desc: 'En çok görüntülenen scriptler', pop_empty: 'Henüz yeterli veri yok.',
+    about_title: 'HAKKINDA',
+    about_q1: 'Kim Bu?', about_a1: 'Humanoid Script Hub — Roblox topluluğu için premium, ücretsiz ve kaliteli scriptler.',
+    about_q2: 'Scriptler', about_a2: 'Tüm scriptler bizzat test edilmiş ve optimize edilmiştir. Güvenli ve kullanımı kolaydır.',
+    about_q3: 'Güvenlik', about_a3: 'Her script dikkatli incelenmiş ve zararlı unsur içermemektedir. %100 güvenli.',
+    login_title: 'Giriş Yap', login_user: 'Kullanıcı Adı', login_pass: 'Şifre',
+    login_err: 'Kullanıcı adı veya şifre hatalı!', btn_login_submit: 'Giriş Yap ⚡', no_account: 'Hesabın yok mu?',
+    register_title: 'Kayıt Ol', reg_user: 'Kullanıcı Adı', reg_ok: '✅ Kayıt başarılı! Giriş yapılıyor...',
+    btn_reg_submit: 'Kayıt Ol ✨', has_account: 'Hesabın var mı?',
+    loader_txt: 'Yükleniyor...', hero_btn_scripts: '📜 Scriptlere Gözat', hero_btn_join: '⚡ Hemen Katıl',
+    stat_scripts: 'Script', stat_users: 'Kullanıcı', stat_views: 'Görüntülenme', stat_free: 'Ücretsiz',
+    search_empty: 'Arama sonucu bulunamadı.', admin_panel: '👑 YÖNETİM PANELİ', admin_manage: 'Sitenizi buradan yönetin.',
+    admin_tab_scripts: '📜 Scriptler', admin_tab_users: '👥 Kullanıcılar', admin_tab_ann: '📢 Duyuru',
+    admin_tab_stats: '📊 İstatistik', admin_tab_config: '⚙️ Site Ayarları', admin_add_script: '➕ Yeni Script Ekle',
+    detail_desc: '📄 Açıklama', detail_features: '⚡ Özellikler', detail_info: 'ℹ️ Bilgiler',
+    info_game: '🎮 Oyun', info_cat: '📂 Kategori', info_views: '👁 Görüntülenme', info_key: '🔑 Key Sistemi',
+    info_status: '✅ Durum', info_added: '📅 Eklenme', copy_code: '📋 KODU KOPYALA', btn_edit: '✏️ Düzenle', btn_delete: '🗑️ Sil',
+    chat_clear: '🧹 Sohbeti Temizle'
   }
 };
 let currentLang = localStorage.getItem('hmd_lang') || 'en';
@@ -63,6 +103,33 @@ function applyTranslations() {
   const br = document.getElementById('btn-register');
   if (bl) bl.textContent = T.btn_login;
   if (br) br.textContent = T.btn_register;
+
+  // Dynamically update siteConfig texts if they match the defaults
+  const cfg = siteConfig || DEFAULT_CONFIG;
+  const heroSub = document.getElementById('hero-subtitle');
+  if (heroSub) {
+      if (cfg.herosubtitle === DEFAULT_CONFIG.herosubtitle) {
+          heroSub.textContent = currentLang === 'en' ? 'Premium, tested and secure Roblox scripts. Completely free.' : DEFAULT_CONFIG.herosubtitle;
+      } else {
+          heroSub.textContent = cfg.herosubtitle;
+      }
+  }
+  const aboutText = document.getElementById('about-text-1');
+  if (aboutText) {
+      if (cfg.about1 === DEFAULT_CONFIG.about1) {
+          aboutText.textContent = currentLang === 'en' ? 'Humanoid Script Hub — Premium, free, and high-quality scripts for the Roblox community.' : DEFAULT_CONFIG.about1;
+      } else {
+          aboutText.textContent = cfg.about1;
+      }
+  }
+  const tdesc = document.getElementById('scripts-page-desc');
+  if (tdesc) {
+      if (cfg.scriptsdesc === DEFAULT_CONFIG.scriptsdesc) {
+          tdesc.textContent = currentLang === 'en' ? 'The entire premium Roblox script collection.' : DEFAULT_CONFIG.scriptsdesc;
+      } else {
+          tdesc.textContent = cfg.scriptsdesc;
+      }
+  }
 }
 
 const ADMIN_USER = 'erenzxo';
@@ -305,11 +372,13 @@ function applyUserUI() {
   document.getElementById('nav-user').classList.toggle('hidden', !loggedIn);
   document.getElementById('admin-nav-item').classList.toggle('hidden', !isAdmin);
 
-  // Chat input state
+  // Chat input state & clear chat button
   const ciEl = document.getElementById('chat-logged-in');
   const coEl = document.getElementById('chat-logged-out');
+  const ccBtn = document.getElementById('chat-clear-btn');
   if (ciEl) ciEl.classList.toggle('hidden', !loggedIn);
   if (coEl) coEl.classList.toggle('hidden', loggedIn);
+  if (ccBtn) ccBtn.classList.toggle('hidden', !isAdmin);
 
   if (loggedIn) {
     document.getElementById('nav-username').textContent = currentUser.username;
@@ -545,19 +614,19 @@ async function openDetailPage(id) {
 
         ${(s.desc || s.longdesc) ? `
         <div class="detail-panel">
-          <div class="dp-head">📄 Açıklama</div>
+          <div class="dp-head" data-i18n="detail_desc">📄 Açıklama</div>
           <div class="detail-desc">${esc(s.longdesc || s.desc)}</div>
         </div>` : ''}
 
         <div class="detail-panel">
-          <div class="dp-head">⚡ Özellikler</div>
+          <div class="dp-head" data-i18n="detail_features">⚡ Özellikler</div>
           <div class="features-list">${featureRows}</div>
         </div>
 
         <div class="code-panel">
           <div class="code-panel-top">
             <span class="cp-title">📋 script.lua</span>
-            <button class="copy-code-btn" id="ccb-${id}" onclick="copyCode('${id}')">📋 Kopyala</button>
+            <button class="copy-code-btn" id="ccb-${id}" onclick="copyCode('${id}')" data-i18n="copy_btn">📋 Kopyala</button>
           </div>
           <pre class="code-block"><code class="language-lua" id="code-el-${id}">${esc(s.code || '')}</code></pre>
         </div>
@@ -566,24 +635,25 @@ async function openDetailPage(id) {
       </div>
 
       <div class="detail-sidebar">
-        <button class="execute-btn" onclick="copyCode('${id}')">
+        <button class="execute-btn" onclick="copyCode('${id}')" data-i18n="copy_code">
           📋 KODU KOPYALA
         </button>
 
         <div class="detail-panel">
-          <div class="dp-head">ℹ️ Bilgiler</div>
-          ${s.game ? `<div class="detail-info-row"><div class="dir-label">🎮 Oyun</div><div class="dir-value">${esc(s.game)}</div></div>` : ''}
-          <div class="detail-info-row"><div class="dir-label">📂 Kategori</div><div class="dir-value">${s.category}</div></div>
-          <div class="detail-info-row"><div class="dir-label">👁 Görüntülenme</div><div class="dir-value">${s.views}</div></div>
-          <div class="detail-info-row"><div class="dir-label">🔑 Key Sistemi</div><div class="dir-value">${s.keyless ? '🔓 Yok' : '🔑 Var'}</div></div>
-          <div class="detail-info-row"><div class="dir-label">✅ Durum</div><div class="dir-value">${s.verified ? '✅ Test Edildi' : '⚠️ Test Bekleniyor'}</div></div>
-          ${s.createdAt ? `<div class="detail-info-row"><div class="dir-label">📅 Eklenme</div><div class="dir-value">${s.createdAt}</div></div>` : ''}
+          <div class="dp-head" data-i18n="detail_info">ℹ️ Bilgiler</div>
+          ${s.game ? `<div class="detail-info-row"><div class="dir-label" data-i18n="info_game">🎮 Oyun</div><div class="dir-value">${esc(s.game)}</div></div>` : ''}
+          <div class="detail-info-row"><div class="dir-label" data-i18n="info_cat">📂 Kategori</div><div class="dir-value">${s.category}</div></div>
+          <div class="detail-info-row"><div class="dir-label" data-i18n="info_views">👁 Görüntülenme</div><div class="dir-value">${s.views}</div></div>
+          <div class="detail-info-row"><div class="dir-label" data-i18n="info_key">🔑 Key Sistemi</div><div class="dir-value">${s.keyless ? '🔓 Yok' : '🔑 Var'}</div></div>
+          <div class="detail-info-row"><div class="dir-label" data-i18n="info_status">✅ Durum</div><div class="dir-value">${s.verified ? '✅ Test Edildi' : '⚠️ Test Bekleniyor'}</div></div>
+          ${s.createdAt ? `<div class="detail-info-row"><div class="dir-label" data-i18n="info_added">📅 Eklenme</div><div class="dir-value">${s.createdAt}</div></div>` : ''}
         </div>
       </div>
     </div>
   `;
 
   navigate('detail', null);
+  applyTranslations();
 
   // Syntax highlight
   const codeEl = document.getElementById('code-el-' + id);
@@ -1173,6 +1243,7 @@ function adjustBrightness(hex, amount) {
 //  CHAT
 // ============================================================
 let chatSubscription = null;
+let lastMsgTime = null;
 
 async function loadChatMessages() {
   const container = document.getElementById('chat-messages');
@@ -1185,23 +1256,57 @@ async function loadChatMessages() {
     .order('created_at', { ascending: true })
     .limit(100);
 
-  if (error || !data || data.length === 0) return;
-  if (empty) empty.remove();
+  if (error) return;
+  
+  if (!data || data.length === 0) {
+      if (empty) {
+          empty.style.display = 'block';
+      }
+      return;
+  }
+  
+  if (empty) {
+      empty.style.display = 'none';
+  }
   container.innerHTML = '';
   data.forEach(m => container.appendChild(buildChatMsg(m)));
   container.scrollTop = container.scrollHeight;
+  if(data.length > 0) lastMsgTime = data[data.length - 1].created_at;
 
   if (chatSubscription) chatSubscription.unsubscribe();
   chatSubscription = _supabase
     .channel('messages-realtime')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
       const empty2 = document.getElementById('chat-empty');
-      if (empty2) empty2.remove();
+      if (empty2) empty2.style.display = 'none';
       container.appendChild(buildChatMsg(payload.new));
       container.scrollTop = container.scrollHeight;
+      lastMsgTime = payload.new.created_at;
     })
     .subscribe();
 }
+
+async function fetchNewMessages() {
+  if (!document.getElementById('page-chat').classList.contains('active')) return; 
+  let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
+  if (lastMsgTime) {
+    query = query.gt('created_at', lastMsgTime);
+  }
+  const { data, error } = await query;
+  if (!error && data && data.length > 0) {
+    const container = document.getElementById('chat-messages');
+    const empty = document.getElementById('chat-empty');
+    if (empty) empty.style.display = 'none';
+    data.forEach(m => {
+       if (m.created_at > (lastMsgTime || '')) {
+           container.appendChild(buildChatMsg(m));
+           lastMsgTime = m.created_at;
+       }
+    });
+    container.scrollTop = container.scrollHeight;
+  }
+}
+setInterval(fetchNewMessages, 3000);
 
 function buildChatMsg(m) {
   const div = document.createElement('div');
@@ -1219,6 +1324,20 @@ function buildChatMsg(m) {
   return div;
 }
 
+async function clearChat() {
+  if (!currentUser || !currentUser.isAdmin) return;
+  if (!confirm("Tüm sohbet mesajlarını silmek istediğinize emin misiniz? / Are you sure you want to clear chat?")) return;
+  // This uses a dummy condition because sometimes delete without matching is disallowed.
+  const { error } = await _supabase.from('messages').delete().neq('username', 'nonexistent_impossible_xyz');
+  if (!error) {
+    showToast("✅ Sohbet temizlendi! / Chat cleared!");
+    document.getElementById('chat-messages').innerHTML = '<div class="chat-empty" id="chat-empty" data-i18n="chat_empty">No messages yet. Be the first!</div>';
+    applyTranslations();
+  } else {
+    showToast("⚠️ Silinemedi rls policy check?");
+  }
+}
+
 async function sendMessage() {
   if (!currentUser) { showToast('\u26a0\ufe0f Mesaj göndermek için giriş yap!'); return; }
   const input = document.getElementById('chat-input');
@@ -1226,15 +1345,27 @@ async function sendMessage() {
   if (!content) return;
   if (content.length > 500) { showToast('\u26a0\ufe0f Mesaj 500 karakterden uzun olamaz!'); return; }
 
+  // Optimistic UI update
+  const tempMsg = {
+    username: currentUser.username,
+    content: content,
+    is_admin: !!currentUser.isAdmin,
+    created_at: new Date().toISOString()
+  };
+  const container = document.getElementById('chat-messages');
+  const empty = document.getElementById('chat-empty');
+  if (empty) empty.style.display = 'none';
+  container.appendChild(buildChatMsg(tempMsg));
+  container.scrollTop = container.scrollHeight;
+  input.value = '';
+
   const { error } = await _supabase.from('messages').insert([{
     username: currentUser.username,
-    content,
+    content: content,
     is_admin: !!currentUser.isAdmin
   }]);
 
-  if (!error) {
-    input.value = '';
-  } else {
+  if (error) {
     showToast("⚠️ Mesaj gönderilemedi. Supabase'de messages tablosunu oluşturmanız gerekiyor!");
   }
 }
