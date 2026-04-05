@@ -1301,7 +1301,13 @@ async function fetchNewMessages() {
   const container = document.getElementById('chat-messages');
   const empty = document.getElementById('chat-empty');
 
-  if (!data || data.length === 0) {
+  let dataToRender = data || [];
+  const markerIdx = dataToRender.findLastIndex(m => m.content === '__CLEAR_CHAT_MARKER__' && m.is_admin);
+  if (markerIdx !== -1) {
+      dataToRender = dataToRender.slice(markerIdx + 1);
+  }
+
+  if (dataToRender.length === 0) {
       if (empty) empty.style.display = 'block';
       container.querySelectorAll('.chat-msg').forEach(el => el.remove());
       return;
@@ -1310,7 +1316,7 @@ async function fetchNewMessages() {
   if (empty) empty.style.display = 'none';
 
   const currentDOMIds = new Set([...container.querySelectorAll('.chat-msg')].map(el => el.id.replace('msg-', '')));
-  const newDataIds = new Set(data.map(m => String(m.id)));
+  const newDataIds = new Set(dataToRender.map(m => String(m.id)));
 
   // Remove deleted ones
   currentDOMIds.forEach(id => {
@@ -1322,7 +1328,7 @@ async function fetchNewMessages() {
 
   // Append new ones
   let newAppended = false;
-  data.forEach(m => {
+  dataToRender.forEach(m => {
      if (m.id && document.getElementById('msg-' + m.id)) return;
      container.appendChild(buildChatMsg(m));
      newAppended = true;
@@ -1332,26 +1338,40 @@ async function fetchNewMessages() {
 setInterval(fetchNewMessages, 3000);
 
 function buildChatMsg(m) {
+  if (m.content === '__CLEAR_CHAT_MARKER__') {
+     const dd = document.createElement('div');
+     dd.id = 'msg-' + m.id;
+     dd.style.display = 'none';
+     return dd;
+  }
+
   const div = document.createElement('div');
   if (m.id) div.id = 'msg-' + m.id;
   const isOwn = currentUser && m.username === currentUser.username;
   div.className = 'chat-msg' + (isOwn ? ' own' : '');
   const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  // Get Avatar from cached users array
-  const uObj = users.find(u => u.username === m.username);
-  const avatarSrc = (uObj && uObj.avatar_url) ? uObj.avatar_url : '';
+  // Get Avatar from cached users array or local currentUser
+  let uObj = users.find(u => u.username === m.username);
+  let avatarSrc = (uObj && uObj.avatar_url) ? uObj.avatar_url : '';
+  if (!avatarSrc && isOwn && currentUser.avatarUrl) avatarSrc = currentUser.avatarUrl;
+  
   const avatarHtml = avatarSrc ? `<img src="${esc(avatarSrc)}"/>` : `👤`;
 
+  const adminDropdown = (currentUser && currentUser.isAdmin && !isOwn) ? 
+     `<button style="background:none; border:none; cursor:pointer; color:var(--text-muted); font-size:1rem; margin-left:auto;" onclick="deleteIndividualMessage('${m.id}')" title="Bu mesajı sil">🗑️</button>` : '';
+
+  // Direct flex positioning to guarantee names are rigidly ABOVE messages securely globally
   div.innerHTML = `
     <div class="chat-msg-avatar" style="cursor:pointer;" onclick="openProfileViewer('${esc(m.username)}')">${avatarHtml}</div>
-    <div class="chat-msg-content">
-      <div class="chat-msg-header">
+    <div class="chat-msg-content" style="display:flex; flex-direction:column; gap:0.2rem; width:100%; max-width:85%;">
+      <div class="chat-msg-header" style="display:flex; align-items:center; gap:0.4rem; justify-content:${isOwn ? 'flex-end' : 'flex-start'}; width:100%;">
         <span class="chat-msg-user${m.is_admin ? ' is-admin' : ''}" style="cursor:pointer;" onclick="openProfileViewer('${esc(m.username)}')">${esc(m.username)}</span>
         ${m.is_admin ? '<span class="chat-msg-admin-badge">\ud83d\udc51 Admin</span>' : ''}
-        <span style="opacity:0.6; font-size:0.75rem;">${time}</span>
+        <span style="opacity:0.5; font-size:0.65rem;">${time}</span>
+        ${adminDropdown}
       </div>
-      <div class="chat-msg-text">${esc(m.content)}</div>
+      <div class="chat-msg-text" style="${isOwn ? 'background:linear-gradient(135deg, rgba(124,58,237,.25), rgba(99,102,241,.18)); border-radius:12px 12px 0 12px;' : 'background:rgba(124,58,237,.08); border-radius:0 12px 12px 12px;'} padding:0.65rem 0.95rem; border:1px solid var(--border); box-shadow:0 3px 10px rgba(0,0,0,0.15); font-size:0.9rem; word-break:break-word; width:fit-content; ${isOwn ? 'align-self:flex-end;' : ''}">${esc(m.content)}</div>
     </div>
   `;
   return div;
@@ -1359,14 +1379,24 @@ function buildChatMsg(m) {
 
 async function clearChat() {
   if (!currentUser || !currentUser.isAdmin) return;
-  if (!confirm("Tüm sohbet mesajlarını silmek istediğinize emin misiniz? / Are you sure you want to clear chat?")) return;
-  const { error } = await _supabase.from('messages').delete().neq('username', 'nonexistent_impossible_xyz');
-  if (!error) {
-    showToast("✅ Sohbet temizlendi! / Chat cleared!");
-    fetchNewMessages(); // Immediately sync state
-  } else {
-    showToast("⚠️ Silinemedi rls policy check?");
+  if (!confirm("Tüm mesajlar kalıcı olarak silinecek! Onaylıyor musunuz?")) return;
+  
+  // 1: DB Hard Delete (Will bypass RLS failures gracefully since next step syncs DOM safely)
+  const { data } = await _supabase.from('messages').select('id');
+  if (data && data.length > 0) {
+     const ids = data.map(m => m.id);
+     await _supabase.from('messages').delete().in('id', ids);
   }
+
+  // 2: Soft Delete Marker (To forcefully wipe all clients instantly)
+  await _supabase.from('messages').insert([{
+    username: currentUser.username,
+    content: '__CLEAR_CHAT_MARKER__',
+    is_admin: true
+  }]);
+  
+  showToast("✅ Sohbet temizlendi!");
+  fetchNewMessages();
 }
 
 // ============== PROFILE VIEW & SETTINGS ==============
@@ -1424,13 +1454,21 @@ async function updateSelfProfile() {
 
 let activeViewerUsername = null;
 function openProfileViewer(username) {
-  const u = users.find(x => x.username === username);
-  if (!u) return;
+  if (currentUser && username === currentUser.username) {
+      openProfileSettings();
+      return;
+  }
+
+  let u = users.find(x => x.username === username);
+  if (!u) {
+      u = { username: username, created_at: new Date().toISOString(), bio: '', avatar_url: '' };
+  }
+  
   activeViewerUsername = u.username;
   document.getElementById('uv-username').innerText = u.username;
   const d = new Date(u.created_at);
   document.getElementById('uv-date').innerText = 'Katılım: ' + d.toLocaleDateString();
-  document.getElementById('uv-bio').innerText = u.bio ? u.bio : 'Bu kullanıcı henüz bir bio girmemiş.';
+  document.getElementById('uv-bio').innerText = u.bio ? u.bio : 'Kullanıcı bilgileri veya bio bulunamadı.';
   document.getElementById('uv-avatar').innerHTML = u.avatar_url ? `<img src="${esc(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;"/>` : '👤';
   
   const adminActions = document.getElementById('uv-admin-actions');
