@@ -641,8 +641,8 @@ async function openDetailPage(id) {
         <button class="execute-btn" onclick="copyCode('${id}')" data-i18n="copy_code">
           📋 KODU KOPYALA
         </button>
-        ${s.game_link ? `
-        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(s.game_link)}" target="_blank" rel="noopener">
+        ${s.game_id ? `
+        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(s.game_id)}" target="_blank" rel="noopener">
           🎮 Oyuna Git
         </a>
         ` : ''}
@@ -724,7 +724,7 @@ async function editScript(id) {
   document.getElementById('sm-featured').checked = !!s.featured;
   document.getElementById('sm-keyless').checked  = !!s.keyless;
   document.getElementById('sm-verified').checked = !!s.verified;
-  if (document.getElementById('sm-gamelink')) document.getElementById('sm-gamelink').value = s.game_link || '';
+  if (document.getElementById('sm-gamelink')) document.getElementById('sm-gamelink').value = s.game_id || '';
   // Restore image
   _pendingImage = s.image || '';
   if (_pendingImage) {
@@ -757,7 +757,7 @@ async function saveScript() {
   const gamelinkVal = document.getElementById('sm-gamelink')?.value.trim() || '';
 
   const scriptObj = { 
-    name, game, game_link: gamelinkVal, category, image,
+    name, game, game_id: gamelinkVal, category, image,
     description: desc, long_description: longdesc, features, code, 
     featured, keyless, verified 
   };
