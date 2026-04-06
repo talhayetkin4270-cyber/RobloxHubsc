@@ -258,6 +258,7 @@
         <button class="admin-tab" onclick="switchAdminTab('users',this)" data-i18n="admin_tab_users">👥 Kullanıcılar</button>
         <button class="admin-tab" onclick="switchAdminTab('announcement',this)" data-i18n="admin_tab_ann">📢 Duyuru</button>
         <button class="admin-tab" onclick="switchAdminTab('stats',this)" data-i18n="admin_tab_stats">📊 İstatistik</button>
+        <button class="admin-tab" onclick="switchAdminTab('visitors',this)" data-i18n="admin_tab_visitors">👀 Ziyaretçiler</button>
         <button class="admin-tab" onclick="switchAdminTab('siteconfig',this)" data-i18n="admin_tab_config">⚙️ Site Ayarları</button>
       </div>
 
@@ -405,6 +406,27 @@
             </div>
           </div>
 
+        </div>
+        </div>
+      </div>
+
+      <!-- VISITORS -->
+      <div id="at-visitors" class="admin-panel-section hidden">
+        <div class="admin-header-row" style="margin-bottom:1.5rem">
+          <h2 data-i18n="admin_tab_visitors">👀 Ziyaretçiler</h2>
+          <button class="btn btn-ghost btn-sm" onclick="renderAdminVisitors()">🔄 Yenile</button>
+        </div>
+        <div class="glass-card" style="padding:1rem; overflow-x: auto;">
+          <table style="width:100%;text-align:left;border-collapse:collapse;" id="visitors-table">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);color:var(--text-muted);">
+                <th style="padding-bottom:.5rem">Kullanıcı / ID</th>
+                <th style="padding-bottom:.5rem">Son Giriş Zamanı</th>
+              </tr>
+            </thead>
+            <tbody id="visitors-tbody"></tbody>
+          </table>
+          <div id="visitors-empty" class="hidden" style="text-align:center;padding:2rem;color:var(--text-muted);">Henüz ziyaretçi kaydı yok.</div>
         </div>
       </div>
 

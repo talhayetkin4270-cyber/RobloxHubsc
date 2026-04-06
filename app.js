@@ -12,34 +12,35 @@ const TRANSLATIONS = {
     nav_popular: '🔥 Popular', nav_chat: '💬 Chat', nav_about: '⚙️ About',
     btn_login: 'Login', btn_register: 'Register', logout: 'Logout',
     search_placeholder: 'Search scripts or games...',
-    chat_desc: 'Ask questions, share ideas with the community.',
-    chat_empty: 'No messages yet. Be the first!',
-    chat_placeholder: 'Write a message...', chat_send: 'Send',
-    chat_login_prompt: 'Please log in to send messages.',
+    chat_desc: 'Engage with the community, seek support, and collaborate.',
+    chat_empty: 'No messages yet. Be the first to start the conversation!',
+    chat_placeholder: 'Write your message...', chat_send: 'Send',
+    chat_login_prompt: 'Please log in to participate in the chat.',
     pp_customize: 'Profile Color', pp_avatar_url: 'Avatar URL',
-    about_contact: 'Contact', about_contact_desc: 'Reach us on Discord or social media.',
-    view_btn: 'View →', copy_btn: '📋 Copy', copied_btn: '✅ Copied!',
-    all_filter: 'All',
-    featured_title: '⭐ Featured Scripts', see_all: 'See All →', featured_empty: 'No featured scripts yet.',
-    recent_title: '🕓 Recently Added', recent_empty: 'No scripts added yet.',
-    pop_title: 'POPULAR', pop_desc: 'Most viewed scripts', pop_empty: 'Not enough data yet.',
-    about_title: 'ABOUT', 
-    about_q1: 'Who Are We?', about_a1: 'Humanoid Script Hub — Premium, free, and high-quality scripts for the Roblox community.',
-    about_q2: 'Scripts', about_a2: 'All scripts are personally tested and optimized. Safe and easy to use.',
-    about_q3: 'Security', about_a3: 'Every script is carefully examined and contains no harmful elements. 100% secure.',
-    login_title: 'Log In', login_user: 'Username', login_pass: 'Password',
-    login_err: 'Invalid username or password!', btn_login_submit: 'Log In ⚡', no_account: "Don't have an account?",
-    register_title: 'Register', reg_user: 'Username', reg_ok: '✅ Registration successful! Logging in...',
-    btn_reg_submit: 'Register ✨', has_account: 'Already have an account?',
-    loader_txt: 'Loading...', hero_btn_scripts: '📜 Browse Scripts', hero_btn_join: '⚡ Join Now',
-    stat_scripts: 'Scripts', stat_users: 'Users', stat_views: 'Views', stat_free: 'Free',
-    search_empty: 'No results found.', admin_panel: '👑 ADMIN PANEL', admin_manage: 'Manage your site here.',
-    admin_tab_scripts: '📜 Scripts', admin_tab_users: '👥 Users', admin_tab_ann: '📢 Announcement', 
-    admin_tab_stats: '📊 Stats', admin_tab_config: '⚙️ Settings', admin_add_script: '➕ Add Script',
-    detail_desc: '📄 Description', detail_features: '⚡ Features', detail_info: 'ℹ️ Info',
-    info_game: '🎮 Game', info_cat: '📂 Category', info_views: '👁 Views', info_key: '🔑 Key System',
-    info_status: '✅ Status', info_added: '📅 Added', copy_code: '📋 COPY CODE', btn_edit: '✏️ Edit', btn_delete: '🗑️ Delete',
-    chat_clear: '🧹 Clear Chat'
+    about_contact: 'Contact Us', about_contact_desc: 'Reach out to our team via Discord.',
+    view_btn: 'View Details →', copy_btn: '📋 Copy', copied_btn: '✅ Copied!',
+    all_filter: 'All Categories',
+    featured_title: '⭐ Editor\'s Choice', see_all: 'View All →', featured_empty: 'No featured scripts available.',
+    recent_title: '🕓 Recently Published', recent_empty: 'No scripts have been published yet.',
+    pop_title: 'TRENDING', pop_desc: 'Highly engaged scripts by our community', pop_empty: 'Insufficient data to display trending scripts.',
+    about_title: 'ABOUT US', 
+    about_q1: 'Our Mission', about_a1: 'Humanoid Script Hub delivers premium, high-quality, and reliable scripts for the Roblox ecosystem.',
+    about_q2: 'Quality Assurance', about_a2: 'Every script undergoes rigorous testing to ensure optimal performance, stability, and reliability.',
+    about_q3: 'Security Standards', about_a3: 'Each script is meticulously reviewed to guarantee a 100% secure experience with absolutely no malicious elements.',
+    login_title: 'Sign In', login_user: 'Username', login_pass: 'Password',
+    login_err: 'Invalid credentials provided!', btn_login_submit: 'Secure Login ⚡', no_account: "Don't have an account?",
+    register_title: 'Create Account', reg_user: 'Username', reg_ok: '✅ Account created successfully! Authenticating...',
+    btn_reg_submit: 'Register Account ✨', has_account: 'Already have an account?',
+    loader_txt: 'Authenticating...', hero_btn_scripts: '📜 Browse Scripts', hero_btn_join: '⚡ Join the Community',
+    stat_scripts: 'Scripts', stat_users: 'Active Users', stat_views: 'Total Views', stat_free: 'Free',
+    search_empty: 'No matching records found.', admin_panel: '👑 MANAGEMENT CONSOLE', admin_manage: 'Oversee and manage your platform statistics.',
+    admin_tab_scripts: '📜 Scripts', admin_tab_users: '👥 Users', admin_tab_ann: '📢 Announcements', 
+    admin_tab_stats: '📊 Analytics', admin_tab_config: '⚙️ Configuration', admin_add_script: '➕ Publish Script',
+    detail_desc: '📄 Documentation', detail_features: '⚡ Key Features', detail_info: 'ℹ️ Technical Details',
+    info_game: '🎮 Target Game', info_cat: '📂 Category', info_views: '👁 Total Views', info_key: '🔑 Key System',
+    info_status: '✅ Verification Status', info_added: '📅 Published Date', copy_code: '📋 COPY SOURCE', btn_edit: '✏️ Edit', btn_delete: '🗑️ Remove',
+    chat_clear: '🧹 Purge Chat History',
+    play_game: '🎮 Play Game', admin_tab_visitors: '👀 Visitors'
   },
   tr: {
     nav_home: '🏠 Ana Sayfa', nav_scripts: '📜 Scriptler',
@@ -73,7 +74,8 @@ const TRANSLATIONS = {
     detail_desc: '📄 Açıklama', detail_features: '⚡ Özellikler', detail_info: 'ℹ️ Bilgiler',
     info_game: '🎮 Oyun', info_cat: '📂 Kategori', info_views: '👁 Görüntülenme', info_key: '🔑 Key Sistemi',
     info_status: '✅ Durum', info_added: '📅 Eklenme', copy_code: '📋 KODU KOPYALA', btn_edit: '✏️ Düzenle', btn_delete: '🗑️ Sil',
-    chat_clear: '🧹 Sohbeti Temizle'
+    chat_clear: '🧹 Sohbeti Temizle',
+    play_game: '🎮 Oyuna Git', admin_tab_visitors: '👀 Ziyaretçiler'
   }
 };
 let currentLang = localStorage.getItem('hmd_lang') || 'en';
@@ -180,6 +182,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   restoreSession();
   setLang(currentLang);
   updateDiscordLink();
+  trackVisitor();
 
   // Chat auth state
   const loggedIn = !!currentUser;
@@ -247,6 +250,49 @@ function restoreSession() {
 }
 
 // ============================================================
+//  VISITOR TRACKING (Stateless via localStorage & siteConfig)
+// ============================================================
+function trackVisitor() {
+  let vId = localStorage.getItem('hmd_visitor_id');
+  if (!vId) {
+    vId = 'Guest-' + Math.random().toString(36).substring(2,6).toUpperCase();
+    localStorage.setItem('hmd_visitor_id', vId);
+  }
+  
+  if (!siteConfig.visitors) siteConfig.visitors = [];
+  
+  // Throttle updates to max once every 30 mins to save DB
+  const lastVisit = localStorage.getItem('hmd_last_visit');
+  const now = Date.now();
+  if (lastVisit && (now - parseInt(lastVisit)) < 30 * 60 * 1000) return;
+  localStorage.setItem('hmd_last_visit', now.toString());
+
+  const vData = { id: vId, time: new Date().toLocaleString() };
+  siteConfig.visitors.unshift(vData);
+  if (siteConfig.visitors.length > 50) siteConfig.visitors.pop();
+  
+  // Fire and forget save
+  _supabase.from('site_config').upsert({ id: 1, config: siteConfig }).then(() => {});
+}
+
+window.renderAdminVisitors = function() {
+  const tbody = document.getElementById('visitors-tbody');
+  const empty = document.getElementById('visitors-empty');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const vis = siteConfig.visitors || [];
+  if (vis.length === 0) { empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  
+  vis.forEach(v => {
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+    tr.innerHTML = `<td style="padding:.75rem 0;color:var(--accent-purple-b);font-weight:600;">${esc(v.id)}</td><td style="padding:.75rem 0;color:var(--text-secondary);font-size:.9rem">${esc(v.time)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ============================================================
 //  RENDER ALL
 // ============================================================
 function renderAll() {
@@ -257,6 +303,7 @@ function renderAll() {
   renderAdminScripts();
   renderAdminUsers();
   updateStats();
+  if (typeof renderAdminVisitors === 'function') renderAdminVisitors();
 }
 
 // ============================================================
@@ -271,7 +318,7 @@ function navigate(page, el) {
   currentPage = page;
   window.scrollTo({ top: 0, behavior: 'smooth' });
   document.getElementById('nav-links').classList.remove('mobile-open');
-  if (page === 'admin') { renderAdminScripts(); renderAdminUsers(); }
+  if (page === 'admin') { renderAdminScripts(); renderAdminUsers(); if (typeof renderAdminVisitors === 'function') renderAdminVisitors(); }
 }
 
 function toggleMobileMenu() {
@@ -659,7 +706,7 @@ async function openDetailPage(id) {
           📋 KODU KOPYALA
         </button>
         ${linkToGame ? `
-        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(linkToGame)}" target="_blank" rel="noopener">
+        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(linkToGame)}" target="_blank" rel="noopener" data-i18n="play_game">
           🎮 Oyuna Git
         </a>
         ` : ''}
