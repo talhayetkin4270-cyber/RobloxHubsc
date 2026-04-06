@@ -642,7 +642,7 @@ async function openDetailPage(id) {
           📋 KODU KOPYALA
         </button>
         ${s.game_id ? `
-        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(s.game_id)}" target="_blank" rel="noopener">
+        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="https://www.roblox.com/games/${esc(s.game_id)}" target="_blank" rel="noopener">
           🎮 Oyuna Git
         </a>
         ` : ''}
@@ -724,7 +724,9 @@ async function editScript(id) {
   document.getElementById('sm-featured').checked = !!s.featured;
   document.getElementById('sm-keyless').checked  = !!s.keyless;
   document.getElementById('sm-verified').checked = !!s.verified;
-  if (document.getElementById('sm-gamelink')) document.getElementById('sm-gamelink').value = s.game_id || '';
+  if (document.getElementById('sm-gamelink')) {
+    document.getElementById('sm-gamelink').value = s.game_id ? `https://www.roblox.com/games/${s.game_id}` : '';
+  }
   // Restore image
   _pendingImage = s.image || '';
   if (_pendingImage) {
@@ -754,10 +756,15 @@ async function saveScript() {
 
   if (!name || !desc || !code) { showToast('⚠️ Ad, açıklama ve kod zorunludur!'); return; }
 
-  const gamelinkVal = document.getElementById('sm-gamelink')?.value.trim() || '';
+  const rawLink = document.getElementById('sm-gamelink')?.value.trim() || '';
+  let parsedGameId = null;
+  if (rawLink) {
+    const match = rawLink.match(/\d+/);
+    if (match) parsedGameId = parseInt(match[0], 10);
+  }
 
   const scriptObj = { 
-    name, game, game_id: gamelinkVal, category, image,
+    name, game, game_id: parsedGameId, category, image,
     description: desc, long_description: longdesc, features, code, 
     featured, keyless, verified 
   };
