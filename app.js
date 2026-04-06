@@ -526,13 +526,14 @@ function renderPopularGrid() {
 // ============================================================
 //  GAME DATA HELPER
 // ============================================================
-function getGameData(gameStr) {
-  if (!gameStr) return { name: '', link: '' };
-  if (gameStr.includes('|#|')) {
-    const parts = gameStr.split('|#|');
-    return { name: parts[0] || '', link: parts[1] || '' };
-  }
-  return { name: gameStr, link: '' };
+function extractGameLink(featuresText) {
+  if (!featuresText) return '';
+  const match = featuresText.match(/\[GAMELINK=(.*?)\]/);
+  return match ? match[1] : '';
+}
+function cleanFeatures(featuresText) {
+  if (!featuresText) return '';
+  return featuresText.replace(/\n?\[GAMELINK=.*?\]/g, '');
 }
 
 // ============================================================
@@ -561,7 +562,7 @@ function buildCard(script) {
         ${script.verified ? '<span class="sc-badge-verified">✅ Verified</span>' : ''}
       </div>
       <div class="sc-name">${esc(script.name)}</div>
-      ${getGameData(script.game).name ? `<div class="sc-game">🎮 ${esc(getGameData(script.game).name)}</div>` : ''}
+      ${script.game ? `<div class="sc-game">🎮 ${esc(script.game)}</div>` : ''}
       <div class="sc-desc">${esc(script.desc || script.description || '')}</div>
       <div class="sc-footer">
         <span class="sc-views">👁 <span>${script.views || 0}</span></span>
@@ -584,15 +585,13 @@ async function openDetailPage(id) {
   await _supabase.from('scripts').update({ views: s.views }).eq('id', id);
 
   const container = document.getElementById('detail-content');
-  const features  = (s.features || '').split('\n').filter(f => f.trim());
-  const codePreview = (s.code || '').slice(0, 600);
+  const rawFeatures = s.features || '';
+  const linkToGame = extractGameLink(rawFeatures);
+  const cleanFtrs = cleanFeatures(rawFeatures);
+  const featuresList = cleanFtrs.split('\n').filter(f => f.trim());
 
-  const bannerHtml = s.image
-    ? `<img class="detail-banner" src="${esc(s.image)}" onerror="this.outerHTML=defaultBanner()">`
-    : `<div class="detail-banner-ph"><div class="detail-banner-ph-code">${esc(codePreview)}</div></div>`;
-
-  const featureRows = features.length
-    ? features.map(f => `<div class="feature-item">${esc(f.trim())}</div>`).join('')
+  const featureRows = featuresList.length
+    ? featuresList.map(f => `<div class="feature-item">${esc(f.trim())}</div>`).join('')
     : '<div style="color:var(--text-muted);font-size:.85rem">Özellik listesi eklenmemiş.</div>';
 
   const adminBtns = (currentUser && currentUser.isAdmin)
@@ -653,15 +652,15 @@ async function openDetailPage(id) {
         <button class="execute-btn" onclick="copyCode('${id}')" data-i18n="copy_code">
           📋 KODU KOPYALA
         </button>
-        ${getGameData(s.game).link ? `
-        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(getGameData(s.game).link)}" target="_blank" rel="noopener">
+        ${linkToGame ? `
+        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(linkToGame)}" target="_blank" rel="noopener">
           🎮 Oyuna Git
         </a>
         ` : ''}
 
         <div class="detail-panel">
           <div class="dp-head" data-i18n="detail_info">ℹ️ Bilgiler</div>
-          ${getGameData(s.game).name ? `<div class="detail-info-row"><div class="dir-label" data-i18n="info_game">🎮 Oyun</div><div class="dir-value">${esc(getGameData(s.game).name)}</div></div>` : ''}
+          ${s.game ? `<div class="detail-info-row"><div class="dir-label" data-i18n="info_game">🎮 Oyun</div><div class="dir-value">${esc(s.game)}</div></div>` : ''}
           <div class="detail-info-row"><div class="dir-label" data-i18n="info_cat">📂 Kategori</div><div class="dir-value">${s.category}</div></div>
           <div class="detail-info-row"><div class="dir-label" data-i18n="info_views">👁 Görüntülenme</div><div class="dir-value">${s.views}</div></div>
           <div class="detail-info-row"><div class="dir-label" data-i18n="info_key">🔑 Key Sistemi</div><div class="dir-value">${s.keyless ? '🔓 Yok' : '🔑 Var'}</div></div>
@@ -727,17 +726,17 @@ async function editScript(id) {
   document.getElementById('sm-title').textContent    = 'Script Düzenle';
   document.getElementById('sm-id').value        = id;
   document.getElementById('sm-name').value      = s.name     || '';
-  document.getElementById('sm-game').value      = getGameData(s.game).name;
+  document.getElementById('sm-game').value      = s.game     || '';
   document.getElementById('sm-cat').value       = s.category || 'utility';
   document.getElementById('sm-desc').value      = s.description || s.desc || '';
   document.getElementById('sm-longdesc').value  = s.long_description || s.longdesc || '';
-  document.getElementById('sm-features').value  = s.features || '';
+  document.getElementById('sm-features').value  = cleanFeatures(s.features) || '';
   document.getElementById('sm-code').value      = s.code     || '';
   document.getElementById('sm-featured').checked = !!s.featured;
   document.getElementById('sm-keyless').checked  = !!s.keyless;
   document.getElementById('sm-verified').checked = !!s.verified;
   if (document.getElementById('sm-gamelink')) {
-    document.getElementById('sm-gamelink').value = getGameData(s.game).link;
+    document.getElementById('sm-gamelink').value = extractGameLink(s.features);
   }
   // Restore image
   _pendingImage = s.image || '';
@@ -770,14 +769,15 @@ async function saveScript() {
 
   const rawLink = document.getElementById('sm-gamelink')?.value.trim() || '';
   
-  let combinedGame = game;
+  let combinedFeatures = features;
   if (rawLink) {
-    combinedGame = game + '|#|' + rawLink;
+    if (combinedFeatures) combinedFeatures += "\n";
+    combinedFeatures += "[GAMELINK=" + rawLink + "]";
   }
 
   const scriptObj = { 
-    name, game: combinedGame, category, image,
-    description: desc, long_description: longdesc, features, code, 
+    name, game, category, image,
+    description: desc, long_description: longdesc, features: combinedFeatures, code, 
     featured, keyless, verified 
   };
 
