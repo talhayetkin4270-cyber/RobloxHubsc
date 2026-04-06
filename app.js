@@ -524,6 +524,18 @@ function renderPopularGrid() {
 }
 
 // ============================================================
+//  GAME DATA HELPER
+// ============================================================
+function getGameData(gameStr) {
+  if (!gameStr) return { name: '', link: '' };
+  if (gameStr.includes('|#|')) {
+    const parts = gameStr.split('|#|');
+    return { name: parts[0] || '', link: parts[1] || '' };
+  }
+  return { name: gameStr, link: '' };
+}
+
+// ============================================================
 //  BUILD CARD
 // ============================================================
 function buildCard(script) {
@@ -549,7 +561,7 @@ function buildCard(script) {
         ${script.verified ? '<span class="sc-badge-verified">✅ Verified</span>' : ''}
       </div>
       <div class="sc-name">${esc(script.name)}</div>
-      ${script.game ? `<div class="sc-game">🎮 ${esc(script.game)}</div>` : ''}
+      ${getGameData(script.game).name ? `<div class="sc-game">🎮 ${esc(getGameData(script.game).name)}</div>` : ''}
       <div class="sc-desc">${esc(script.desc || script.description || '')}</div>
       <div class="sc-footer">
         <span class="sc-views">👁 <span>${script.views || 0}</span></span>
@@ -641,15 +653,15 @@ async function openDetailPage(id) {
         <button class="execute-btn" onclick="copyCode('${id}')" data-i18n="copy_code">
           📋 KODU KOPYALA
         </button>
-        ${s.game_id ? `
-        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="https://www.roblox.com/games/${esc(s.game_id)}" target="_blank" rel="noopener">
+        ${getGameData(s.game).link ? `
+        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(getGameData(s.game).link)}" target="_blank" rel="noopener">
           🎮 Oyuna Git
         </a>
         ` : ''}
 
         <div class="detail-panel">
           <div class="dp-head" data-i18n="detail_info">ℹ️ Bilgiler</div>
-          ${s.game ? `<div class="detail-info-row"><div class="dir-label" data-i18n="info_game">🎮 Oyun</div><div class="dir-value">${esc(s.game)}</div></div>` : ''}
+          ${getGameData(s.game).name ? `<div class="detail-info-row"><div class="dir-label" data-i18n="info_game">🎮 Oyun</div><div class="dir-value">${esc(getGameData(s.game).name)}</div></div>` : ''}
           <div class="detail-info-row"><div class="dir-label" data-i18n="info_cat">📂 Kategori</div><div class="dir-value">${s.category}</div></div>
           <div class="detail-info-row"><div class="dir-label" data-i18n="info_views">👁 Görüntülenme</div><div class="dir-value">${s.views}</div></div>
           <div class="detail-info-row"><div class="dir-label" data-i18n="info_key">🔑 Key Sistemi</div><div class="dir-value">${s.keyless ? '🔓 Yok' : '🔑 Var'}</div></div>
@@ -715,7 +727,7 @@ async function editScript(id) {
   document.getElementById('sm-title').textContent    = 'Script Düzenle';
   document.getElementById('sm-id').value        = id;
   document.getElementById('sm-name').value      = s.name     || '';
-  document.getElementById('sm-game').value      = s.game     || '';
+  document.getElementById('sm-game').value      = getGameData(s.game).name;
   document.getElementById('sm-cat').value       = s.category || 'utility';
   document.getElementById('sm-desc').value      = s.description || s.desc || '';
   document.getElementById('sm-longdesc').value  = s.long_description || s.longdesc || '';
@@ -725,7 +737,7 @@ async function editScript(id) {
   document.getElementById('sm-keyless').checked  = !!s.keyless;
   document.getElementById('sm-verified').checked = !!s.verified;
   if (document.getElementById('sm-gamelink')) {
-    document.getElementById('sm-gamelink').value = s.game_id ? `https://www.roblox.com/games/${s.game_id}` : '';
+    document.getElementById('sm-gamelink').value = getGameData(s.game).link;
   }
   // Restore image
   _pendingImage = s.image || '';
@@ -757,14 +769,14 @@ async function saveScript() {
   if (!name || !desc || !code) { showToast('⚠️ Ad, açıklama ve kod zorunludur!'); return; }
 
   const rawLink = document.getElementById('sm-gamelink')?.value.trim() || '';
-  let parsedGameId = null;
+  
+  let combinedGame = game;
   if (rawLink) {
-    const match = rawLink.match(/\d+/);
-    if (match) parsedGameId = parseInt(match[0], 10);
+    combinedGame = game + '|#|' + rawLink;
   }
 
   const scriptObj = { 
-    name, game, game_id: parsedGameId, category, image,
+    name, game: combinedGame, category, image,
     description: desc, long_description: longdesc, features, code, 
     featured, keyless, verified 
   };
