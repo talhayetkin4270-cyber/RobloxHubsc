@@ -594,13 +594,6 @@ async function openDetailPage(id) {
     ? "document.querySelector('[data-page=popular]')"
     : "document.querySelector('[data-page=scripts]')";
 
-  const gameBtns = (s.game_id)
-    ? `<div class="game-btn-row">
-        <a class="btn-game-link" href="https://www.roblox.com/games/${esc(s.game_id)}" target="_blank" rel="noopener">🌐 Game Page</a>
-        <a class="btn-play-game" href="roblox://placeId=${esc(s.game_id)}">▶️ Play Game</a>
-       </div>`
-    : '';
-
   container.innerHTML = `
     <button class="back-btn" onclick="navigate('${backPage}', ${backEl})">← Back</button>
 
@@ -615,7 +608,6 @@ async function openDetailPage(id) {
           ${s.verified ? '<span class="sc-badge-verified">✅ Verified</span>' : ''}
           ${s.featured ? '<span class="sc-featured-pin" style="position:static">⭐ Featured</span>' : ''}
         </div>
-        ${gameBtns}
       </div>
     </div>
 
@@ -649,6 +641,11 @@ async function openDetailPage(id) {
         <button class="execute-btn" onclick="copyCode('${id}')" data-i18n="copy_code">
           📋 KODU KOPYALA
         </button>
+        ${s.game_link ? `
+        <a class="btn btn-primary btn-full" style="margin-top: 10px; text-decoration: none; display: block; text-align: center; padding: 12px; font-weight: bold; background: var(--accent-purple); color: white; border-radius: 8px;" href="${esc(s.game_link)}" target="_blank" rel="noopener">
+          🎮 Oyuna Git
+        </a>
+        ` : ''}
 
         <div class="detail-panel">
           <div class="dp-head" data-i18n="detail_info">ℹ️ Bilgiler</div>
@@ -697,7 +694,7 @@ let _pendingImage = '';
 
 function openAddScript() {
   document.getElementById('sm-title').textContent = 'Yeni Script Ekle';
-  ['sm-id','sm-name','sm-game','sm-desc','sm-longdesc','sm-features','sm-code'].forEach(id => {
+  ['sm-id','sm-name','sm-game','sm-gamelink','sm-desc','sm-longdesc','sm-features','sm-code'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -727,7 +724,7 @@ async function editScript(id) {
   document.getElementById('sm-featured').checked = !!s.featured;
   document.getElementById('sm-keyless').checked  = !!s.keyless;
   document.getElementById('sm-verified').checked = !!s.verified;
-  if (document.getElementById('sm-gameid')) document.getElementById('sm-gameid').value = s.game_id || '';
+  if (document.getElementById('sm-gamelink')) document.getElementById('sm-gamelink').value = s.game_link || '';
   // Restore image
   _pendingImage = s.image || '';
   if (_pendingImage) {
@@ -757,10 +754,10 @@ async function saveScript() {
 
   if (!name || !desc || !code) { showToast('⚠️ Ad, açıklama ve kod zorunludur!'); return; }
 
-  const gameIdVal = document.getElementById('sm-gameid')?.value.trim() || '';
+  const gamelinkVal = document.getElementById('sm-gamelink')?.value.trim() || '';
 
   const scriptObj = { 
-    name, game, category, image,
+    name, game, game_link: gamelinkVal, category, image,
     description: desc, long_description: longdesc, features, code, 
     featured, keyless, verified 
   };
