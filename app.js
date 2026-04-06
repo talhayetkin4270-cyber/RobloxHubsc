@@ -590,6 +590,12 @@ async function openDetailPage(id) {
   const cleanFtrs = cleanFeatures(rawFeatures);
   const featuresList = cleanFtrs.split('\n').filter(f => f.trim());
 
+  const codePreview = (s.code || '').slice(0, 600);
+
+  const bannerHtml = s.image
+    ? `<img class="detail-banner" src="${esc(s.image)}" onerror="this.outerHTML=defaultBanner()">`
+    : `<div class="detail-banner-ph"><div class="detail-banner-ph-code">${esc(codePreview)}</div></div>`;
+
   const featureRows = featuresList.length
     ? featuresList.map(f => `<div class="feature-item">${esc(f.trim())}</div>`).join('')
     : '<div style="color:var(--text-muted);font-size:.85rem">Özellik listesi eklenmemiş.</div>';
